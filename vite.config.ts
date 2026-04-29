@@ -13,4 +13,5 @@ function getPlugins() {
 
 export default defineConfig({
   plugins: getPlugins(),
+  base: "/city-management-system/",
 });
