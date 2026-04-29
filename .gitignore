@@ -35,3 +35,6 @@ coverage
 *.local
 .cache
 .parcel-cache
+
+# PRD documents (keep .github for GitHub Actions)
+*.md
