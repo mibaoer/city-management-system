@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市管理系统功能清单（基于demo）</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .menu-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .module-name {
+            font-weight: 500;
+            color: #34495e;
+            padding-left: 20px;
+        }
+        .feature-list {
+            list-style-type: disc;
+            margin-left: 40px;
+            margin-top: 5px;
+        }
+        .feature-list li {
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>城市管理系统功能清单（基于demo）</h1>
+        
+        <h2>一、主菜单功能</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>菜单名称</th>
+                    <th>功能模块</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="menu-name">城市管理</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>任务管理</li>
+                            <li>车辆管理</li>
+                        </ul>
+                    </td>
+                    <td>显示任务数量，支持查看车辆管理（保洁、市政），出车记录</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">序化管理</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>任务管理</li>
+                        </ul>
+                    </td>
+                    <td>显示任务数量，点击后展示序化管理的任务管理页面</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">建筑垃圾</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>点位管理</li>
+                        </ul>
+                    </td>
+                    <td>显示建筑垃圾点位数量，点击后跳转建筑垃圾管理页面</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">垃圾分类</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>检查管理</li>
+                            <li>数据统计</li>
+                        </ul>
+                    </td>
+                    <td>显示垃圾分类检查数量，点击后展示垃圾分类详情</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">已征未用</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>地块管理</li>
+                        </ul>
+                    </td>
+                    <td>显示已征未用地块数量和面积，点击后展示详情</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">人员管理</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>人员信息管理</li>
+                            <li>到岗状态监控</li>
+                        </ul>
+                    </td>
+                    <td>显示队员数量和到岗数量，点击后跳转人员管理页面</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">事件整改</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>事件管理</li>
+                            <li>整改跟踪</li>
+                        </ul>
+                    </td>
+                    <td>显示事件数量，支持实时状态监控和事件详情查看</td>
+                </tr>
+                <tr>
+                    <td class="menu-name">合同管理</td>
+                    <td class="module-name">
+                        <ul class="feature-list">
+                            <li>合同信息管理</li>
+                            <li>到期提醒</li>
+                        </ul>
+                    </td>
+                    <td>显示合同总数量，提供到期提醒功能</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>二、详细功能模块</h2>
+        
+        <h3>1. 城市管理模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">任务管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务列表</li>
+                            <li>任务详情</li>
+                            <li>任务创建</li>
+                            <li>任务编辑</li>
+                            <li>任务状态更新</li>
+                        </ul>
+                    </td>
+                    <td>管理城市管理相关的任务，包括查看、创建、编辑和更新任务状态</td>
+                </tr>
+                <tr>
+                    <td class="module-name">车辆管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>车辆信息管理</li>
+                            <li>出车记录</li>
+                            <li>车辆状态监控</li>
+                        </ul>
+                    </td>
+                    <td>管理保洁、市政等车辆信息，记录出车情况，监控车辆状态</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>2. 序化管理模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">任务管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务列表</li>
+                            <li>任务详情</li>
+                            <li>任务创建</li>
+                            <li>任务编辑</li>
+                            <li>任务状态更新</li>
+                        </ul>
+                    </td>
+                    <td>管理序化管理相关的任务，包括流动摊贩、违章建筑、地铁口管理、车辆违停等</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>3. 建筑垃圾模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">点位管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>点位列表</li>
+                            <li>点位详情</li>
+                            <li>点位添加</li>
+                            <li>点位编辑</li>
+                        </ul>
+                    </td>
+                    <td>管理建筑垃圾堆放点位，包括点位信息的增删改查</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>4. 垃圾分类模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">检查管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>检查记录列表</li>
+                            <li>检查详情</li>
+                            <li>检查创建</li>
+                            <li>检查标准对照</li>
+                        </ul>
+                    </td>
+                    <td>管理垃圾分类检查记录，包括查看、创建检查记录，对照检查标准</td>
+                </tr>
+                <tr>
+                    <td class="module-name">数据统计</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>检查数量统计</li>
+                            <li>得分统计</li>
+                            <li>问题分布分析</li>
+                        </ul>
+                    </td>
+                    <td>统计垃圾分类检查数据，包括检查数量、得分情况和问题分布</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>5. 已征未用模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">地块管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>地块列表</li>
+                            <li>地块详情</li>
+                            <li>面积统计</li>
+                        </ul>
+                    </td>
+                    <td>管理已征未用地块信息，包括地块列表、详情和面积统计</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>6. 人员管理模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">人员信息管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>人员列表</li>
+                            <li>人员详情</li>
+                            <li>人员添加</li>
+                            <li>人员编辑</li>
+                        </ul>
+                    </td>
+                    <td>管理系统人员信息，包括人员的增删改查</td>
+                </tr>
+                <tr>
+                    <td class="module-name">到岗状态监控</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>实时到岗状态</li>
+                            <li>到岗率统计</li>
+                        </ul>
+                    </td>
+                    <td>监控人员到岗状态，统计到岗率</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>7. 事件整改模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">事件管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>事件列表</li>
+                            <li>事件详情</li>
+                            <li>事件上报</li>
+                            <li>事件分派</li>
+                        </ul>
+                    </td>
+                    <td>管理各类事件，包括事件的上报、分派和详情查看</td>
+                </tr>
+                <tr>
+                    <td class="module-name">整改跟踪</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>整改过程跟踪</li>
+                            <li>整改结果验收</li>
+                            <li>整改期限管理</li>
+                        </ul>
+                    </td>
+                    <td>跟踪事件整改过程，管理整改期限，验收整改结果</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>8. 合同管理模块</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>功能模块</th>
+                    <th>子功能</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">合同信息管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>合同列表</li>
+                            <li>合同详情</li>
+                            <li>合同添加</li>
+                            <li>合同编辑</li>
+                        </ul>
+                    </td>
+                    <td>管理合同信息，包括合同的增删改查</td>
+                </tr>
+                <tr>
+                    <td class="module-name">到期提醒</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>到期合同提醒</li>
+                            <li>到期日期管理</li>
+                        </ul>
+                    </td>
+                    <td>提供合同到期提醒功能，管理合同到期日期</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>三、页面功能清单</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>页面名称</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">DashboardPage</td>
+                    <td>系统主控制台，展示所有功能模块入口，包含城市管理团队统计、任务完成情况、整改与验收情况等</td>
+                </tr>
+                <tr>
+                    <td class="module-name">UrbanManagementPage</td>
+                    <td>城市管理页面，包含任务管理和车辆管理的Tab切换</td>
+                </tr>
+                <tr>
+                    <td class="module-name">TaskListPage</td>
+                    <td>任务列表页面，支持按团队筛选（城市管理、序化管理），包含任务的搜索、筛选和管理功能</td>
+                </tr>
+                <tr>
+                    <td class="module-name">TaskDetailPage</td>
+                    <td>任务详情页面，展示任务详细信息，支持上传检查照片和填写执行结果</td>
+                </tr>
+                <tr>
+                    <td class="module-name">TaskCreatePage</td>
+                    <td>任务创建页面，用于创建新的任务</td>
+                </tr>
+                <tr>
+                    <td class="module-name">VehicleManagementPage</td>
+                    <td>车辆管理页面，管理车辆信息和出车记录</td>
+                </tr>
+                <tr>
+                    <td class="module-name">VehicleTaskExecutionPage</td>
+                    <td>车辆任务执行页面，支持任务执行和照片上传</td>
+                </tr>
+                <tr>
+                    <td class="module-name">ConstructionWasteManagementPage</td>
+                    <td>建筑垃圾管理页面，管理建筑垃圾点位</td>
+                </tr>
+                <tr>
+                    <td class="module-name">GarbageInspectionListPage</td>
+                    <td>垃圾分类检查列表页面，展示垃圾分类检查记录</td>
+                </tr>
+                <tr>
+                    <td class="module-name">GarbageClassificationInspectionPage</td>
+                    <td>垃圾分类检查页面，用于进行垃圾分类检查</td>
+                </tr>
+                <tr>
+                    <td class="module-name">PeopleManagementPage</td>
+                    <td>人员管理页面，管理系统人员信息</td>
+                </tr>
+                <tr>
+                    <td class="module-name">HazardReportingPage</td>
+                    <td>事件上报页面，用于上报和管理各类事件</td>
+                </tr>
+                <tr>
+                    <td class="module-name">StatisticsPage</td>
+                    <td>统计页面，展示系统各类数据统计</td>
+                </tr>
+                <tr>
+                    <td class="module-name">PhotoReportListPage</td>
+                    <td>照片上报列表页面，展示照片上报记录</td>
+                </tr>
+                <tr>
+                    <td class="module-name">MyTasksPage</td>
+                    <td>我的任务页面，展示当前用户的任务</td>
+                </tr>
+                <tr>
+                    <td class="module-name">WasteTransportTaskListPage</td>
+                    <td>垃圾运输任务列表页面，管理垃圾运输任务</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

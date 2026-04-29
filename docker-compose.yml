@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  dashboard:
+    build: .
+    container_name: city-management-dashboard
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - dashboard-network
+
+networks:
+  dashboard-network:
+    driver: bridge

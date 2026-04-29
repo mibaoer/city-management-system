@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市管理系统功能清单</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .module-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .feature-list {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        .feature-list li {
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>城市管理系统功能清单</h1>
+        
+        <h2>一、后台管理中心</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>模块名称</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">任务管理模块</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务创建、编辑、删除</li>
+                            <li>任务分配与调度</li>
+                            <li>任务状态跟踪</li>
+                            <li>任务类型管理（城市管理、序化管理）</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">数据统计分析</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务完成率统计</li>
+                            <li>事件分布分析</li>
+                            <li>区域管理效果评估</li>
+                            <li>趋势分析报表</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">用户权限管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>角色权限配置</li>
+                            <li>用户账号管理</li>
+                            <li>操作日志记录</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">基础信息管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>区域信息维护</li>
+                            <li>点位信息管理</li>
+                            <li>设备设施信息</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">事件整改管理</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>事件接收与分派</li>
+                            <li>整改过程跟踪</li>
+                            <li>验收结果管理</li>
+                            <li>历史事件查询</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">系统配置</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>系统参数设置</li>
+                            <li>业务规则配置</li>
+                            <li>通知模板管理</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>二、任务执行终端</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>模块名称</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">任务接收执行</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务列表查看</li>
+                            <li>任务详情获取</li>
+                            <li>任务状态更新</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">现场检查记录</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>检查内容记录</li>
+                            <li>问题描述录入</li>
+                            <li>检查标准对照</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">照片视频上传</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>现场照片拍摄上传</li>
+                            <li>视频录制上传</li>
+                            <li>附件文件上传</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">事件上报</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>突发事件上报</li>
+                            <li>隐患问题上报</li>
+                            <li>随手拍功能</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">位置定位</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>实时位置上报</li>
+                            <li>任务点位导航</li>
+                            <li>电子围栏管理</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">执行结果反馈</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务完成情况</li>
+                            <li>整改结果汇报</li>
+                            <li>验收申请提交</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>三、数据交互层</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>模块名称</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">任务下发</td>
+                    <td>将后台创建的任务信息下发到执行终端，包括任务详情、执行要求、时间期限等</td>
+                </tr>
+                <tr>
+                    <td class="module-name">执行数据回传</td>
+                    <td>将执行终端采集的数据、照片、视频等回传到后台管理中心</td>
+                </tr>
+                <tr>
+                    <td class="module-name">实时状态更新</td>
+                    <td>实时同步任务执行状态、位置信息、进度更新等</td>
+                </tr>
+                <tr>
+                    <td class="module-name">消息通知</td>
+                    <td>系统通知、任务提醒、状态变更通知、紧急事件告警等</td>
+                </tr>
+                <tr>
+                    <td class="module-name">数据同步</td>
+                    <td>不同模块间的数据共享、跨部门业务协同、数据一致性保障</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>四、技术支撑体系</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>模块名称</th>
+                    <th>功能描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">地图服务</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>提供地理位置信息</li>
+                            <li>支持点位标记和导航</li>
+                            <li>区域划分和管理</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">文件存储</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>照片视频文件存储</li>
+                            <li>附件文档管理</li>
+                            <li>云存储集成</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">消息推送</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>任务通知</li>
+                            <li>状态更新提醒</li>
+                            <li>紧急事件告警</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">数据安全</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>数据加密传输</li>
+                            <li>访问权限控制</li>
+                            <li>数据备份和恢复</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="module-name">API接口</td>
+                    <td>
+                        <ul class="feature-list">
+                            <li>前后端数据交互</li>
+                            <li>第三方系统集成</li>
+                            <li>数据同步机制</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>五、业务流程</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>流程名称</th>
+                    <th>流程描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">任务创建与分配</td>
+                    <td>后台创建任务 → 分配给具体执行人员 → 执行终端接收任务通知</td>
+                </tr>
+                <tr>
+                    <td class="module-name">现场执行与记录</td>
+                    <td>执行人员到达现场 → 进行检查和记录 → 上传照片视频证据 → 标记问题和隐患</td>
+                </tr>
+                <tr>
+                    <td class="module-name">结果反馈与处理</td>
+                    <td>提交执行结果 → 后台审核和处理 → 必要时进行整改跟踪</td>
+                </tr>
+                <tr>
+                    <td class="module-name">数据分析与优化</td>
+                    <td>统计分析执行数据 → 生成报表和趋势 → 优化管理策略和流程</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>六、系统特点</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>特点名称</th>
+                    <th>具体表现</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="module-name">实时性</td>
+                    <td>任务状态实时更新、位置信息实时上报、消息通知实时推送</td>
+                </tr>
+                <tr>
+                    <td class="module-name">移动性</td>
+                    <td>支持移动端操作、现场数据采集、随时随地办公</td>
+                </tr>
+                <tr>
+                    <td class="module-name">可视化</td>
+                    <td>数据图表展示、地图点位标记、执行轨迹回放</td>
+                </tr>
+                <tr>
+                    <td class="module-name">智能化</td>
+                    <td>任务智能分配、异常自动预警、数据分析洞察</td>
+                </tr>
+                <tr>
+                    <td class="module-name">协同性</td>
+                    <td>多部门协同工作、前后端数据同步、业务流程闭环</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
