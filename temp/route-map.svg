@@ -1,0 +1,23 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="800" height="400" fill="#0a1628"/>
+  <!-- 地图网格 -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1e4976" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="400" fill="url(#grid)"/>
+  <!-- 起点标记 -->
+  <circle cx="100" cy="200" r="8" fill="#4ade80"/>
+  <text x="115" y="205" fill="#ffffff" font-size="14" font-family="Arial">新华工地</text>
+  <!-- 终点标记 -->
+  <circle cx="700" cy="200" r="8" fill="#f43f5e"/>
+  <text x="600" y="205" fill="#ffffff" font-size="14" font-family="Arial">余杭区垃圾处理厂</text>
+  <!-- 路线 -->
+  <path d="M 100 200 Q 200 150 300 250 T 500 180 T 700 200" fill="none" stroke="#4ade80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 道路名称 -->
+  <text x="200" y="140" fill="#ffffff" font-size="12" font-family="Arial">莫干山路</text>
+  <text x="400" y="260" fill="#ffffff" font-size="12" font-family="Arial">文一西路</text>
+  <text x="600" y="170" fill="#ffffff" font-size="12" font-family="Arial">余杭塘路</text>
+</svg>

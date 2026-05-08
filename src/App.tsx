@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EntryPage from "@/pages/EntryPage";
 import AdminHomePage from "@/pages/AdminHomePage";
 import TaskExecutionHomePage from "@/pages/TaskExecutionHomePage";
@@ -38,7 +38,8 @@ export default function App() {
     <AuthContext.Provider
       value={{ isAuthenticated, setIsAuthenticated, logout }}
     >
-      <Routes>
+      <BrowserRouter>
+        <Routes>
         {/* 入口选择页面 */}
         <Route path="/" element={<EntryPage />} />
         
@@ -73,7 +74,8 @@ export default function App() {
         <Route path="/urban-management" element={<UrbanManagementPage />} />
         <Route path="/ai-daily-summary" element={<AIDailySummaryPage />} />
         <Route path="/basic-data-maintenance" element={<BasicDataMaintenancePage />} />
-      </Routes>
+        </Routes>
+      </BrowserRouter>
     </AuthContext.Provider>
   );
 }
