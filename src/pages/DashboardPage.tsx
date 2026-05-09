@@ -160,12 +160,22 @@ const DashboardPage: React.FC = () => {
     }
   };
   
+  // 事件整改详情页面状态
+  const [showEventDetail, setShowEventDetail] = useState(false);
+  const [eventDetailData, setEventDetailData] = useState<any>(null);
+
   // 处理表格行点击，显示详情弹窗
   const handleRowClick = (rowData: any) => {
+    // 事件整改类型走独立详情页
+    if (drillDownData.type === 'eventRectification') {
+      setEventDetailData(rowData);
+      setShowEventDetail(true);
+      return;
+    }
     setSelectedRowData(rowData);
     setIsDetailModalOpen(true);
   };
-  
+
   // 关闭详情弹窗
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
@@ -2489,9 +2499,17 @@ const DashboardPage: React.FC = () => {
                       {drillDownData.details.length > 0 && (
                         // 先获取过滤后的字段列表
                         Object.keys(drillDownData.details[0])
+                          // 事件整改类型只保留指定列
+                          .filter(key => {
+                            if (drillDownData.type === 'eventRectification') {
+                              const allowedFields = ['编号', '来源', '问题类型', '地点', '状态', '提交时间', '责任单位', '负责人', '完成率', '事件所属任务', '预期整改时间', '提报人', '提报时间'];
+                              return allowedFields.includes(key);
+                            }
+                            return true;
+                          })
                           // 跳过复杂类型字段
                           .filter(key => {
-                            const complexFields = ['事件信息', '整改信息', '验收确认', '进度跟踪'];
+                            const complexFields = ['事件信息', '整改信息', '验收确认', '进度跟踪', '事件等级', '事件类型', '事件来源'];
                             return !complexFields.includes(key);
                           })
                           // 渲染表头
@@ -2609,9 +2627,17 @@ const DashboardPage: React.FC = () => {
                       >
                         {/* 先获取过滤后的字段列表，确保与表头字段顺序一致 */}
                         {Object.keys(drillDownData.details[0])
-                          // 使用相同的过滤逻辑
+                          // 事件整改类型只保留指定列
                           .filter(key => {
-                            const complexFields = ['事件信息', '整改信息', '验收确认', '进度跟踪'];
+                            if (drillDownData.type === 'eventRectification') {
+                              const allowedFields = ['编号', '来源', '问题类型', '地点', '状态', '提交时间', '责任单位', '负责人', '完成率', '事件所属任务', '预期整改时间', '提报人', '提报时间'];
+                              return allowedFields.includes(key);
+                            }
+                            return true;
+                          })
+                          // 跳过复杂类型字段
+                          .filter(key => {
+                            const complexFields = ['事件信息', '整改信息', '验收确认', '进度跟踪', '事件等级', '事件类型', '事件来源'];
                             return !complexFields.includes(key);
                           })
                           // 渲染表格行
@@ -2733,7 +2759,178 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
       )}
-      
+
+      {/* 事件整改详情页 */}
+      {showEventDetail && eventDetailData && (
+        <div className="fixed inset-0 z-50 bg-[#0a1628] flex flex-col">
+          {/* 顶部导航 */}
+          <div className="flex items-center justify-between px-6 py-4 bg-[#0a1f3a]/80 border-b border-[#1e4976]">
+            <button
+              onClick={() => { setShowEventDetail(false); setEventDetailData(null); }}
+              className="flex items-center gap-2 text-[#00e5ff] hover:text-white transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              返回列表
+            </button>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] bg-clip-text text-transparent">
+              事件详情
+            </h2>
+            <div className="w-20" />
+          </div>
+
+          {/* 主体内容 */}
+          <div className="flex-1 flex overflow-hidden p-6 gap-6">
+            {/* 左侧：事件信息 + 整改信息 */}
+            <div className="flex-1 flex flex-col gap-6 overflow-y-auto">
+              {/* 事件信息 */}
+              <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-xl border border-[#1e4976] p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-base font-bold text-[#00e5ff] flex items-center gap-2">
+                    <span className="w-1 h-4 bg-[#00e5ff] rounded" />
+                    事件信息
+                  </h3>
+                  {/* 状态标签 */}
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    eventDetailData.status === '已完成' || eventDetailData.status === '验收中'
+                      ? 'bg-green-900/30 text-green-400 border border-green-700/50'
+                      : eventDetailData.status === '整改中'
+                        ? 'bg-blue-900/30 text-blue-400 border border-blue-700/50'
+                        : eventDetailData.status === '待整改'
+                          ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700/50'
+                          : 'bg-gray-900/30 text-gray-400 border border-gray-700/50'
+                  }`}>
+                    {eventDetailData.status || '--'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                  {[
+                    ['事件等级', eventDetailData['事件等级'] || '--'],
+                    ['事件类型', eventDetailData['事件类型'] || '--'],
+                    ['事件来源', eventDetailData['事件来源'] || '--'],
+                    ['事件所属任务', eventDetailData['事件所属任务'] || '--'],
+                    ['预期整改时间', eventDetailData['预期整改时间'] || '--'],
+                    ['提报人', eventDetailData['提报人'] || '--'],
+                    ['提报时间', eventDetailData['提报时间'] || '--'],
+                    ['事件位置', eventDetailData['事件位置'] || '--'],
+                    ['应整改单位', eventDetailData['责任单位'] || '--'],
+                  ].map(([label, val]) => (
+                    <div key={label as string} className="flex items-center text-sm">
+                      <span className="text-gray-400 w-28 flex-shrink-0">{label}：</span>
+                      <span className="text-white">{val}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 事件图片 */}
+                {eventDetailData['事件照片'] && (
+                  <div className="mt-4 flex items-center text-sm">
+                    <span className="text-gray-400 w-28 flex-shrink-0">事件图片：</span>
+                    <div className="flex gap-2">
+                      <img src={eventDetailData['事件照片']} alt="事件图片" className="w-20 h-16 object-cover rounded border border-[#1e4976]" />
+                    </div>
+                  </div>
+                )}
+
+                {/* 事件描述 */}
+                <div className="mt-4 text-sm">
+                  <span className="text-gray-400">事件描述：</span>
+                  <span className="text-white">{eventDetailData['事件描述'] || '--'}</span>
+                </div>
+              </div>
+
+              {/* 整改信息 */}
+              <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-xl border border-[#1e4976] p-5">
+                <h3 className="text-base font-bold text-[#00e5ff] flex items-center gap-2 mb-4">
+                  <span className="w-1 h-4 bg-[#00e5ff] rounded" />
+                  整改信息
+                </h3>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                  {[
+                    ['整改完成时间', eventDetailData['整改完成时间'] || '--'],
+                    ['整改人', eventDetailData['整改人'] || '--'],
+                    ['整改单位', eventDetailData['所属部门'] || '--'],
+                    ['所属部门', eventDetailData['所属部门'] || '--'],
+                  ].map(([label, val]) => (
+                    <div key={label as string} className="flex items-center text-sm">
+                      <span className="text-gray-400 w-28 flex-shrink-0">{label}：</span>
+                      <span className="text-white">{val}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 整改图片 */}
+                {eventDetailData['整改图片'] && (
+                  <div className="mt-4 flex items-center text-sm">
+                    <span className="text-gray-400 w-28 flex-shrink-0">整改图片：</span>
+                    <div className="flex gap-2">
+                      <img src={eventDetailData['整改图片']} alt="整改图片" className="w-20 h-16 object-cover rounded border border-[#1e4976]" />
+                    </div>
+                  </div>
+                )}
+
+                {/* 整改描述 */}
+                {eventDetailData['整改描述'] && (
+                  <div className="mt-4 text-sm">
+                    <span className="text-gray-400">整改描述：</span>
+                    <span className="text-white">{eventDetailData['整改描述']}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 右侧：进度跟踪 */}
+            <div className="w-96 bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-xl border border-[#1e4976] p-5 overflow-y-auto flex-shrink-0">
+              <h3 className="text-base font-bold text-[#00e5ff] flex items-center gap-2 mb-6">
+                <span className="w-1 h-4 bg-[#00e5ff] rounded" />
+                进度跟踪
+              </h3>
+              {eventDetailData['进度跟踪'] && Array.isArray(eventDetailData['进度跟踪']) && eventDetailData['进度跟踪'].length > 0 ? (
+                <div className="relative">
+                  {/* 时间线竖线 */}
+                  <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-[#1e4976]" />
+                  {eventDetailData['进度跟踪'].map((step: any, index: number) => {
+                    const isLast = index === eventDetailData['进度跟踪'].length - 1;
+                    const isComplete = step.操作 === '整改确认' || step.操作 === '事件整改';
+                    return (
+                      <div key={index} className="relative pl-7 pb-6 last:pb-0">
+                        {/* 圆点 */}
+                        <div className={`absolute left-0 top-1 w-3.5 h-3.5 rounded-full border-2 ${
+                          isComplete
+                            ? 'bg-[#00e5ff] border-[#00e5ff]'
+                            : 'bg-[#0a1628] border-[#1e4976]'
+                        }`} />
+                        {/* 步骤标题 */}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-white">{step.操作}</span>
+                          <span className="text-xs text-gray-500">{step.时间}</span>
+                        </div>
+                        {/* 描述 */}
+                        <div className="text-xs text-gray-400 mb-2">{step.描述}</div>
+                        {/* 图片/签名 */}
+                        {step.图片 && (
+                          <div className="mb-2">
+                            <img src={step.图片} alt="整改图片" className="w-20 h-16 object-cover rounded border border-[#1e4976]" />
+                          </div>
+                        )}
+                        {step.签名 && (
+                          <div className="text-xs text-gray-400">
+                            签名：<img src={step.签名} alt="签名" className="w-24 h-10 object-contain mt-1" />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-gray-500 text-sm text-center py-8">暂无进度记录</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 详情弹窗 */}
       {isDetailModalOpen && selectedRowData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
