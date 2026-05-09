@@ -740,7 +740,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
         
         {isFiltersExpanded && (
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {/* 搜索框 */}
               <div className="relative">
                 <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -752,7 +752,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   className="w-full pl-10 pr-4 py-2 border border-[#1e4976] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] bg-[#0a1628] text-white"
                 />
               </div>
-              
+
               {/* 任务类型筛选 */}
               <div className="relative">
                 <select
@@ -767,7 +767,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 </select>
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
-              
+
               {/* 状态筛选 */}
               <div className="relative">
                 <select
@@ -782,7 +782,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 </select>
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
-              
+
               {/* 执行人员筛选 */}
               <div className="relative">
                 <select
@@ -797,7 +797,18 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 </select>
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
-              
+
+              {/* 新建任务按钮 */}
+              <div className="flex justify-end">
+                <button
+                  onClick={handleCreateTask}
+                  className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap"
+                >
+                  <Plus size={18} className="mr-2" />
+                  新建任务
+                </button>
+              </div>
+
               {/* 职能分类筛选 */}
               <div className="relative">
                 <select
@@ -806,14 +817,11 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   className="w-full pl-4 pr-10 py-2 border border-[#1e4976] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] bg-[#0a1628] text-white appearance-none"
                 >
                   <option value="all">所有职能分类</option>
-                  {/* 根据当前激活的tab显示对应的职能分类 */}
                   {activeTab === 'all' ? (
-                    // 显示所有职能分类
                     Object.values(FUNCTION_CATEGORIES).flat().map((category) => (
                       <option key={category.id} value={category.id}>{category.name}</option>
                     ))
                   ) : (
-                    // 只显示当前tab对应的职能分类
                     FUNCTION_CATEGORIES[activeTab as keyof typeof FUNCTION_CATEGORIES].map((category) => (
                       <option key={category.id} value={category.id}>{category.name}</option>
                     ))
@@ -821,7 +829,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 </select>
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
-              
+
               {/* 重点区域筛选 */}
               <div className="relative">
                 <select
@@ -836,7 +844,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 </select>
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
-              
+
               {/* 主要道路筛选 */}
               <div className="relative">
                 <select
@@ -854,16 +862,6 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
             </div>
           </div>
         )}
-        {/* 新建任务按钮 */}
-        <div className="px-6 pb-4 flex justify-end">
-          <button
-            onClick={handleCreateTask}
-            className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all"
-          >
-            <Plus size={18} className="mr-2" />
-            新建任务
-          </button>
-        </div>
       </div>
 
       {/* 任务列表 */}
