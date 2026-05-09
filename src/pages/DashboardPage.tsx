@@ -2416,7 +2416,7 @@ const DashboardPage: React.FC = () => {
                 {drillDownData.details.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {/* 仅保留以下筛选字段 */}
-                    {['编号', '来源', '问题类型', '状态', '责任单位'].map(key => {
+                    {['来源', '问题类型', '状态', '责任单位'].map(key => {
                       // 获取该字段的所有唯一值用于下拉选择
                       const uniqueValues = Array.from(
                         new Set(
