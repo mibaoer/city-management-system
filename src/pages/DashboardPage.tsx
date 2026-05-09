@@ -670,26 +670,26 @@ const DashboardPage: React.FC = () => {
             提报人: '王一（一起安区演苏5）',
             提报时间: '2025-12-16 11:06',
             事件位置: '某某市某某区',
-            事件照片: 'https://example.com/hazard1.jpg',
+            事件照片: 'https://picsum.photos/seed/hazard1/200/150',
             事件描述: '屋顶上放置有未开启的瓶装燃料（可乐），存在存放过期风险，可能造成设备损毁或人员伤害，同时，该燃料属于易燃物品，在密闭空间内高温环境或明火存在安全事件。',
             // 整改信息
             整改完成时间: '2025-12-16 11:06',
             整改人: '王一',
             所属部门: '一起安区演苏5',
-            整改图片: 'https://example.com/rectification1.jpg',
+            整改图片: 'https://picsum.photos/seed/rect1/200/150',
             整改描述: '好的，已整改',
-            整改人签名: 'https://example.com/signature1.jpg',
+            整改人签名: 'https://picsum.photos/seed/sig1/200/150',
             // 验收确认
             整改情况: '整改完成',
-            整改完成照片: 'https://example.com/acceptance1.jpg',
+            整改完成照片: 'https://picsum.photos/seed/accept1/200/150',
             整改完成说明: '已整改',
-            验收人签名: 'https://example.com/acceptance_signature1.jpg',
+            验收人签名: 'https://picsum.photos/seed/asig1/200/150',
             // 进度跟踪
             进度跟踪: [
               { 时间: '2025-12-16 11:06', 操作: '事件提交', 人员: '王一', 描述: '创建事件' },
               { 时间: '2025-12-16 11:06', 操作: '事件确认', 人员: '王一', 描述: '确认了事件' },
-              { 时间: '2025-12-16 11:09', 操作: '事件整改', 人员: '王一', 描述: '完成了事件整改', 图片: 'https://example.com/rectification1.jpg', 签名: 'https://example.com/signature1.jpg' },
-              { 时间: '2025-12-16 11:09', 操作: '整改确认', 人员: '王一', 描述: '确认事件整改完成', 图片: 'https://example.com/acceptance1.jpg', 签名: 'https://example.com/acceptance_signature1.jpg' }
+              { 时间: '2025-12-16 11:09', 操作: '事件整改', 人员: '王一', 描述: '完成了事件整改', 图片: 'https://picsum.photos/seed/rect1/200/150', 签名: 'https://picsum.photos/seed/sig1/200/150' },
+              { 时间: '2025-12-16 11:09', 操作: '整改确认', 人员: '王一', 描述: '确认事件整改完成', 图片: 'https://picsum.photos/seed/accept1/200/150', 签名: 'https://picsum.photos/seed/asig1/200/150' }
             ]
           },
           {
@@ -711,25 +711,25 @@ const DashboardPage: React.FC = () => {
             提报人: '李二（一起安区演苏6）',
             提报时间: '2025-12-17 10:30',
             事件位置: '某某市某某区',
-            事件照片: 'https://example.com/hazard2.jpg',
+            事件照片: 'https://picsum.photos/seed/hazard2/200/150',
             事件描述: '餐饮店铺油烟排放不符合标准，影响周边居民生活',
             // 整改信息
             整改完成时间: '2025-12-17 14:30',
             整改人: '李二',
             所属部门: '一起安区演苏6',
-            整改图片: 'https://example.com/rectification2.jpg',
+            整改图片: 'https://picsum.photos/seed/rect2/200/150',
             整改描述: '已安装油烟净化设备',
-            整改人签名: 'https://example.com/signature2.jpg',
+            整改人签名: 'https://picsum.photos/seed/sig2/200/150',
             // 验收确认
             整改情况: '待验收',
-            整改完成照片: 'https://example.com/acceptance2.jpg',
+            整改完成照片: 'https://picsum.photos/seed/accept2/200/150',
             整改完成说明: '已安装油烟净化设备，等待验收',
             验收人签名: '',
             // 进度跟踪
             进度跟踪: [
               { 时间: '2025-12-17 10:30', 操作: '事件提交', 人员: '李二', 描述: '创建事件' },
               { 时间: '2025-12-17 10:35', 操作: '事件确认', 人员: '李二', 描述: '确认了事件' },
-              { 时间: '2025-12-17 14:30', 操作: '事件整改', 人员: '李二', 描述: '完成了事件整改', 图片: 'https://example.com/rectification2.jpg', 签名: 'https://example.com/signature2.jpg' }
+              { 时间: '2025-12-17 14:30', 操作: '事件整改', 人员: '李二', 描述: '完成了事件整改', 图片: 'https://picsum.photos/seed/rect2/200/150', 签名: 'https://picsum.photos/seed/sig2/200/150' }
             ]
           },
           {
@@ -751,7 +751,7 @@ const DashboardPage: React.FC = () => {
             提报人: '张三（市民）',
             提报时间: '2025-12-18 09:15',
             事件位置: '某某市某某区',
-            事件照片: 'https://example.com/hazard3.jpg',
+            事件照片: 'https://picsum.photos/seed/hazard3/200/150',
             事件描述: '道路出现大面积破损，影响车辆和行人通行',
             // 整改信息
             整改完成时间: '',
@@ -791,7 +791,7 @@ const DashboardPage: React.FC = () => {
             提报人: '李四（园林部门）',
             提报时间: '2025-12-19 14:20',
             事件位置: '某某市某某区',
-            事件照片: 'https://example.com/hazard4.jpg',
+            事件照片: 'https://picsum.photos/seed/hazard4/200/150',
             事件描述: '中心公园内多处绿化被破坏，需要修复',
             // 整改信息
             整改完成时间: '',
@@ -829,26 +829,26 @@ const DashboardPage: React.FC = () => {
             提报人: '王五（市民）',
             提报时间: '2025-12-15 16:45',
             事件位置: '某某市某某区',
-            事件照片: 'https://example.com/hazard5.jpg',
+            事件照片: 'https://picsum.photos/seed/hazard5/200/150',
             事件描述: '商业街北段多家店铺占道经营，影响行人通行',
             // 整改信息
             整改完成时间: '2025-12-15 17:30',
             整改人: '王五',
             所属部门: '城管中队',
-            整改图片: 'https://example.com/rectification5.jpg',
+            整改图片: 'https://picsum.photos/seed/rect5/200/150',
             整改描述: '已清理占道经营',
-            整改人签名: 'https://example.com/signature5.jpg',
+            整改人签名: 'https://picsum.photos/seed/sig5/200/150',
             // 验收确认
             整改情况: '整改完成',
-            整改完成照片: 'https://example.com/acceptance5.jpg',
+            整改完成照片: 'https://picsum.photos/seed/accept5/200/150',
             整改完成说明: '已清理占道经营，道路恢复畅通',
-            验收人签名: 'https://example.com/acceptance_signature5.jpg',
+            验收人签名: 'https://picsum.photos/seed/asig5/200/150',
             // 进度跟踪
             进度跟踪: [
               { 时间: '2025-12-15 16:45', 操作: '事件提交', 人员: '王五', 描述: '创建事件' },
               { 时间: '2025-12-15 16:50', 操作: '事件确认', 人员: '王五', 描述: '确认了事件' },
-              { 时间: '2025-12-15 17:30', 操作: '事件整改', 人员: '王五', 描述: '完成了事件整改', 图片: 'https://example.com/rectification5.jpg', 签名: 'https://example.com/signature5.jpg' },
-              { 时间: '2025-12-15 17:35', 操作: '整改确认', 人员: '王五', 描述: '确认事件整改完成', 图片: 'https://example.com/acceptance5.jpg', 签名: 'https://example.com/acceptance_signature5.jpg' }
+              { 时间: '2025-12-15 17:30', 操作: '事件整改', 人员: '王五', 描述: '完成了事件整改', 图片: 'https://picsum.photos/seed/rect5/200/150', 签名: 'https://picsum.photos/seed/sig5/200/150' },
+              { 时间: '2025-12-15 17:35', 操作: '整改确认', 人员: '王五', 描述: '确认事件整改完成', 图片: 'https://picsum.photos/seed/accept5/200/150', 签名: 'https://picsum.photos/seed/asig5/200/150' }
             ]
           }
         ];
