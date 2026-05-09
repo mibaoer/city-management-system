@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Search, Filter, ChevronDown, ChevronUp, X, Save, X as Cancel } from 'lucide-react';
+import VehicleManagementPage from './VehicleManagementPage';
 
 // 道路数据接口
 interface Road {
@@ -167,7 +168,7 @@ const BasicDataMaintenancePage: React.FC = () => {
   const navigate = useNavigate();
   
   // 状态管理
-  const [activeTab, setActiveTab] = useState<'roads' | 'toilets' | 'greening'>('roads');
+  const [activeTab, setActiveTab] = useState<'roads' | 'toilets' | 'greening' | 'vehicles'>('roads');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -186,7 +187,7 @@ const BasicDataMaintenancePage: React.FC = () => {
   };
   
   // 处理标签切换
-  const handleTabChange = (tab: 'roads' | 'toilets' | 'greening') => {
+  const handleTabChange = (tab: 'roads' | 'toilets' | 'greening' | 'vehicles') => {
     setActiveTab(tab);
     setEditingItem(null);
     setShowAddModal(false);
@@ -334,6 +335,12 @@ const BasicDataMaintenancePage: React.FC = () => {
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'greening' ? 'bg-[#00e5ff] text-[#0a1628]' : 'bg-[#1e4976] text-white hover:bg-[#2a5a8a]'}`}
         >
           绿化数据
+        </button>
+        <button
+          onClick={() => handleTabChange('vehicles')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'vehicles' ? 'bg-[#00e5ff] text-[#0a1628]' : 'bg-[#1e4976] text-white hover:bg-[#2a5a8a]'}`}
+        >
+          车辆管理
         </button>
       </div>
       
@@ -485,7 +492,14 @@ const BasicDataMaintenancePage: React.FC = () => {
           </table>
         </div>
       </div>
-      
+
+      {/* 车辆管理 tab 内容 */}
+      {activeTab === 'vehicles' && (
+        <div className="bg-[#0d1b2a] border border-[#1e4976] rounded-lg">
+          <VehicleManagementPage />
+        </div>
+      )}
+
       {/* 添加/编辑模态框 */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
