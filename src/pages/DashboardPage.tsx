@@ -1488,12 +1488,12 @@ const DashboardPage: React.FC = () => {
               {/* 合同管理模块 */}
               <div 
                 onClick={() => navigate('/contract-management')}
-                className="group relative bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] p-3 rounded-lg border border-[#1e4976] hover:border-[#00e5ff] transition-all duration-300 hover:shadow-lg hover:shadow-[#00e5ff]/20 overflow-hidden cursor-pointer w-48 h-28 shrink-0 flex flex-col justify-between"
+                className="group relative bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] p-3 rounded-lg border border-[#1e4976] hover:border-[#00e5ff] transition-all duration-300 hover:shadow-lg hover:shadow-[#00e5ff]/20 overflow-hidden cursor-pointer w-52 h-28 shrink-0 flex flex-col justify-between"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00e5ff]/0 to-[#00e5ff]/0 group-hover:from-[#00e5ff]/5 group-hover:to-[#00e5ff]/10 transition-all duration-300"></div>
                 <div className="absolute left-0 top-0 w-1 h-0 bg-gradient-to-b from-[#00e5ff] to-transparent group-hover:h-full transition-all duration-500"></div>
                 <div className="relative z-10">
-                  <h3 className="text-xs font-bold text-white truncate">合同管理</h3>
+                  <h3 className="text-xs font-bold text-white">合同管理</h3>
                   <div className="text-[10px] text-gray-400 mt-1">总数量、到期提醒</div>
                 </div>
                 <div className="relative z-10">
