@@ -627,39 +627,6 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#081c2f] to-[#0d1b2a] text-white p-6 overflow-x-hidden">
-      {/* Tab切换和新建任务按钮 */}
-      <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] p-4 rounded-lg border border-[#1e4976] shadow-xl shadow-[#00e5ff]/10 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${activeTab === 'all' ? 'bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] text-[#0e2a47] shadow-sm' : 'bg-[#1e4976]/50 text-gray-300 hover:bg-[#2d5a8a]/50'}`}
-            >
-              全部
-            </button>
-            <button
-              onClick={() => setActiveTab('urban')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${activeTab === 'urban' ? 'bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] text-[#0e2a47] shadow-sm' : 'bg-[#1e4976]/50 text-gray-300 hover:bg-[#2d5a8a]/50'}`}
-            >
-              城市管理
-            </button>
-            <button
-              onClick={() => setActiveTab('sequence')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${activeTab === 'sequence' ? 'bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] text-[#0e2a47] shadow-sm' : 'bg-[#1e4976]/50 text-gray-300 hover:bg-[#2d5a8a]/50'}`}
-            >
-              序化管理
-            </button>
-          </div>
-          <button 
-              onClick={handleCreateTask}
-              className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all"
-            >
-              <Plus size={18} className="mr-2" />
-              新建任务
-            </button>
-        </div>
-      </div>
-      
       {/* 数据统计区域 */}
       <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-lg border border-[#1e4976] shadow-xl shadow-[#00e5ff]/10 mb-6">
         <div className="p-4 flex justify-between items-center cursor-pointer" onClick={() => setIsStatsExpanded(!isStatsExpanded)}>
@@ -887,8 +854,18 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
             </div>
           </div>
         )}
+        {/* 新建任务按钮 */}
+        <div className="px-6 pb-4 flex justify-end">
+          <button
+            onClick={handleCreateTask}
+            className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all"
+          >
+            <Plus size={18} className="mr-2" />
+            新建任务
+          </button>
+        </div>
       </div>
-      
+
       {/* 任务列表 */}
       <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-xl shadow-xl shadow-[#00e5ff]/10 border border-[#1e4976] overflow-hidden">
         <div className="overflow-x-auto">

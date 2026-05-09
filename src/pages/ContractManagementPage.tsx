@@ -322,7 +322,7 @@ export default function ContractManagementPage() {
           >
             <ArrowLeft className="w-5 h-5 text-[#00e5ff]" />
           </button>
-          <h1 className="text-xl font-bold text-[#00e5ff]">合同管理</h1>
+          <h1 className="text-xl font-bold text-[#00e5ff]">审批管理</h1>
         </div>
       </div>
 
