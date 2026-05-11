@@ -1446,7 +1446,7 @@ const DashboardPage: React.FC = () => {
               
               {/* 已征未用模块 */}
               <div 
-                onClick={() => handleDataClick('acquiredUnused', '已征未用详情')}
+                onClick={() => navigate('/land-management')}
                 className="group relative bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] p-3 rounded-lg border border-[#1e4976] hover:border-[#00e5ff] transition-all duration-300 hover:shadow-lg hover:shadow-[#00e5ff]/20 overflow-hidden cursor-pointer w-48 h-28 shrink-0 flex flex-col justify-between"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00e5ff]/0 to-[#00e5ff]/0 group-hover:from-[#00e5ff]/5 group-hover:to-[#00e5ff]/10 transition-all duration-300"></div>
