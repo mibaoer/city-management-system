@@ -154,7 +154,7 @@ const ConstructionWasteApproval: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#081c2f] to-[#0d1b2a] text-white p-6 overflow-x-hidden">
       {/* 页面头部 */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-[#00e5ff] via-white to-[#00ffb2] bg-clip-text text-transparent">清运任务审批</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-[#00e5ff] via-white to-[#00ffb2] bg-clip-text text-transparent">清运审批</h1>
       </div>
 
       {/* 搜索和筛选区域 */}

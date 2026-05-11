@@ -740,7 +740,8 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
         
         {isFiltersExpanded && (
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* 第一行：4个筛选条件 */}
               {/* 搜索框 */}
               <div className="relative">
                 <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -798,17 +799,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
 
-              {/* 新建任务按钮 */}
-              <div className="flex justify-end">
-                <button
-                  onClick={handleCreateTask}
-                  className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap"
-                >
-                  <Plus size={18} className="mr-2" />
-                  新建任务
-                </button>
-              </div>
-
+              {/* 第二行：3个筛选条件 + 新建任务按钮 */}
               {/* 职能分类筛选 */}
               <div className="relative">
                 <select
@@ -858,6 +849,17 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   ))}
                 </select>
                 <ChevronDown size={18} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+              </div>
+
+              {/* 新建任务按钮 */}
+              <div className="flex justify-end">
+                <button
+                  onClick={handleCreateTask}
+                  className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap"
+                >
+                  <Plus size={18} className="mr-2" />
+                  新建任务
+                </button>
               </div>
             </div>
           </div>

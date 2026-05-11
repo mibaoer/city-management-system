@@ -52,7 +52,7 @@ const ConstructionWasteManagementPage: React.FC = () => {
             ? 'bg-[#00e5ff] text-[#0a1628]' 
             : 'bg-[#1e4976] text-white hover:bg-[#2a5a8a]'}`}
         >
-          清运任务审批
+          清运审批
         </button>
       </div>
 
