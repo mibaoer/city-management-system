@@ -98,6 +98,12 @@ export default function ContractManagementPage() {
   const [signatureImage, setSignatureImage] = useState('');
   const [approvalAction, setApprovalAction] = useState<'approve' | 'reject' | null>(null);
 
+  // 审批管理筛选状态
+  const [approvalSearchText, setApprovalSearchText] = useState('');
+  const [approvalFilterStatus, setApprovalFilterStatus] = useState<'all' | 'pending_approval' | 'rejected'>('all');
+  const [approvalDateFrom, setApprovalDateFrom] = useState('');
+  const [approvalDateTo, setApprovalDateTo] = useState('');
+
   // Load contracts from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('contracts');
@@ -128,10 +134,26 @@ export default function ContractManagementPage() {
       c.contractName.includes(searchText) ||
       c.partyB.includes(searchText);
     if (activeTab === 'approval') {
-      return matchSearch && (c.status === 'pending_approval' || c.status === 'rejected');
+      if (c.status !== 'pending_approval' && c.status !== 'rejected') return false;
+      const matchApprovalSearch = !approvalSearchText ||
+        c.contractNumber.toLowerCase().includes(approvalSearchText.toLowerCase()) ||
+        c.contractName.includes(approvalSearchText) ||
+        c.partyB.includes(approvalSearchText);
+      const matchApprovalStatus = approvalFilterStatus === 'all' || c.status === approvalFilterStatus;
+      const matchDateFrom = !approvalDateFrom || c.signDate >= approvalDateFrom;
+      const matchDateTo = !approvalDateTo || c.signDate <= approvalDateTo;
+      return matchApprovalSearch && matchApprovalStatus && matchDateFrom && matchDateTo;
     }
     return matchSearch;
   });
+
+  // 重置审批筛选
+  const resetApprovalFilter = () => {
+    setApprovalSearchText('');
+    setApprovalFilterStatus('all');
+    setApprovalDateFrom('');
+    setApprovalDateTo('');
+  };
 
   // File upload handler
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -355,19 +377,19 @@ export default function ContractManagementPage() {
         </button>
       </div>
 
-      {/* Search & Actions */}
-      <div className="px-6 py-4 flex items-center gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            placeholder="搜索合同编号、名称、乙方..."
-            className="w-full pl-10 pr-4 py-2 bg-[#0e2a47] border border-[#1e4976] rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00e5ff]"
-          />
-        </div>
-        {activeTab === 'list' && (
+      {/* 合同列表筛选 */}
+      {activeTab === 'list' && (
+        <div className="px-6 py-4 flex items-center gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              placeholder="搜索合同编号、名称、乙方..."
+              className="w-full pl-10 pr-4 py-2 bg-[#0e2a47] border border-[#1e4976] rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00e5ff]"
+            />
+          </div>
           <button
             onClick={() => { resetImportModal(); setShowImportModal(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-[#00e5ff] text-[#0a1628] rounded-lg text-sm font-medium hover:bg-[#00e5ff]/90 transition-colors"
@@ -375,8 +397,67 @@ export default function ContractManagementPage() {
             <Upload className="w-4 h-4" />
             导入合同
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* 审批管理筛选 */}
+      {activeTab === 'approval' && (
+        <div className="px-6 py-4 space-y-3">
+          <div className="grid grid-cols-4 gap-3 items-end">
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">关键词搜索</label>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                <input
+                  type="text"
+                  value={approvalSearchText}
+                  onChange={e => setApprovalSearchText(e.target.value)}
+                  placeholder="合同编号、名称、乙方"
+                  className="w-full pl-8 pr-3 py-2 bg-[#0e2a47] border border-[#1e4976] rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00e5ff]"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">审批状态</label>
+              <select
+                value={approvalFilterStatus}
+                onChange={e => setApprovalFilterStatus(e.target.value as any)}
+                className="w-full px-3 py-2 bg-[#0e2a47] border border-[#1e4976] rounded-lg text-sm text-white focus:outline-none focus:border-[#00e5ff]"
+              >
+                <option value="all">全部</option>
+                <option value="pending_approval">待审批</option>
+                <option value="rejected">已驳回</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">签订日期起</label>
+              <input
+                type="date"
+                value={approvalDateFrom}
+                onChange={e => setApprovalDateFrom(e.target.value)}
+                className="w-full px-3 py-2 bg-[#0e2a47] border border-[#1e4976] rounded-lg text-sm text-white focus:outline-none focus:border-[#00e5ff]"
+              />
+            </div>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block text-xs text-gray-400 mb-1">签订日期止</label>
+                <input
+                  type="date"
+                  value={approvalDateTo}
+                  onChange={e => setApprovalDateTo(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#0e2a47] border border-[#1e4976] rounded-lg text-sm text-white focus:outline-none focus:border-[#00e5ff]"
+                />
+              </div>
+              <button
+                onClick={resetApprovalFilter}
+                className="px-3 py-2 bg-[#1e4976] border border-[#1e4976] text-white rounded-lg hover:bg-[#2d5a8a] transition-colors text-sm whitespace-nowrap self-end"
+              >
+                重置
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="px-6 pb-6">
