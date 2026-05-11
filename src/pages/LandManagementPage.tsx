@@ -182,7 +182,16 @@ const LandManagementPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 筛选 + 操作 */}
+      {/* 操作栏 */}
+      <div className="mb-3 flex justify-end">
+        <button onClick={handleAdd}
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] text-[#0e2a47] rounded-lg hover:shadow-lg hover:shadow-[#00e5ff]/30 transition-colors font-medium text-sm">
+          <Plus size={16} />
+          新建
+        </button>
+      </div>
+
+      {/* 筛选 + 导入导出 */}
       <div className="mb-6 space-y-3">
         <div className="grid grid-cols-4 gap-3 items-end">
           <div>
