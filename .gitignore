@@ -38,3 +38,4 @@ coverage
 
 # PRD documents (keep .github for GitHub Actions)
 *.md
+.vercel
