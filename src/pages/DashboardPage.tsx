@@ -1515,7 +1515,7 @@ const DashboardPage: React.FC = () => {
                   <div className="text-[10px] text-gray-400 mt-1">维护道路、公厕、绿化等基础数据</div>
                 </div>
                 <div className="relative z-10">
-                  <div className="text-xl font-bold text-[#00e5ff] pb-1">5类</div>
+                  <div className="text-xl font-bold text-[#00e5ff] pb-1">6类</div>
                   <div className="text-[10px] text-gray-500">支持增删改查</div>
                 </div>
                 <div className="absolute -right-3 -bottom-3 w-12 h-12 bg-[#00e5ff]/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>

@@ -48,8 +48,8 @@ const FUNCTION_CATEGORIES = {
   ]
 };
 
-// 重点区域定义
-const KEY_AREAS = [
+// 重点区域定义（默认种子数据）
+const DEFAULT_KEY_AREAS = [
   { id: '1', name: '永旺梦乐城' },
   { id: '2', name: '未来之光' },
   { id: '3', name: '洲际酒店' },
@@ -58,6 +58,19 @@ const KEY_AREAS = [
   { id: '6', name: '地铁口' },
   { id: '7', name: '学校' }
 ];
+
+// 从 localStorage 读取重点区域数据
+function getKeyAreas() {
+  const saved = localStorage.getItem('keyAreas');
+  if (saved) {
+    try {
+      return JSON.parse(saved).map((a: any) => ({ id: a.id, name: a.name }));
+    } catch {
+      return DEFAULT_KEY_AREAS;
+    }
+  }
+  return DEFAULT_KEY_AREAS;
+}
 
 // 主要道路定义
 const MAIN_ROADS = [
@@ -110,7 +123,7 @@ const generateMockTasks = (): Task[] => {
     const functionCategoryIndex = i % functionCategories.length;
     
     // 随机选择重点区域和主要道路
-    const keyAreaIndex = i % KEY_AREAS.length;
+    const keyAreaIndex = i % getKeyAreas().length;
     const mainRoadIndex = i % MAIN_ROADS.length;
     
     // 生成日期
@@ -125,7 +138,7 @@ const generateMockTasks = (): Task[] => {
       taskName: `${TASK_TYPES[taskTypeIndex].name}专项整治任务 ${i}`,
       taskType: TASK_TYPES[taskTypeIndex].id.toString(),
       functionCategory: functionCategories[functionCategoryIndex].id,
-      keyArea: KEY_AREAS[keyAreaIndex].id,
+      keyArea: getKeyAreas()[keyAreaIndex].id,
       mainRoad: MAIN_ROADS[mainRoadIndex].id,
       description: `这是${TASK_TYPES[taskTypeIndex].name}的详细描述内容，包含具体的工作要求和注意事项。`,
       team: teamId,
@@ -349,7 +362,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   
   // 获取重点区域名称
   const getKeyAreaName = (areaId: string) => {
-    const area = KEY_AREAS.find(area => area.id === areaId);
+    const area = getKeyAreas().find(area => area.id === areaId);
     return area ? area.name : '未知区域';
   };
   
@@ -598,7 +611,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
         description: formData.description,
         team: formData.team,
         assignees: formData.assignees,
-        area: KEY_AREAS.find(area => area.id === formData.keyArea)?.name || '',
+        area: getKeyAreas().find(area => area.id === formData.keyArea)?.name || '',
         address: formData.address,
         startDate: formData.startDate,
         endDate: formData.endDate,
@@ -829,7 +842,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   className="w-full pl-4 pr-10 py-2 border border-[#1e4976] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] bg-[#0a1628] text-white appearance-none"
                 >
                   <option value="all">所有重点区域</option>
-                  {KEY_AREAS.map((area) => (
+                  {getKeyAreas().map((area) => (
                     <option key={area.id} value={area.id}>{area.name}</option>
                   ))}
                 </select>
@@ -1161,7 +1174,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                       className={`w-full px-4 py-2 border rounded-lg bg-[#0a1628] text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff] ${errors.keyArea ? 'border-red-500' : 'border-[#1e4976]'}`}
                     >
                       <option value="">请选择重点区域</option>
-                      {KEY_AREAS.map(area => (
+                      {getKeyAreas().map(area => (
                         <option key={area.id} value={area.id}>{area.name}</option>
                       ))}
                     </select>

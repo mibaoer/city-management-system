@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Search, Filter, ChevronDown, ChevronUp, X, Save, X as Cancel } from 'lucide-react';
 import VehicleManagementPage from './VehicleManagementPage';
@@ -33,6 +33,15 @@ interface Greening {
   area: number;
   unit: string;
   type: string;
+  notes: string;
+}
+
+// 重点区域数据接口
+interface KeyArea {
+  id: string;
+  name: string;
+  personInCharge: string;
+  contact: string;
   notes: string;
 }
 
@@ -166,22 +175,42 @@ const mockGreening: Greening[] = [
   { id: '42', roadName: '良渚街道办事处前', roadSection: '良渚路至康良街', area: 550, unit: 'M2', type: '二类', notes: '' }
 ];
 
+// 模拟重点区域数据
+const mockKeyAreas: KeyArea[] = [
+  { id: '1', name: '永旺梦乐城', personInCharge: '张经理', contact: '13800138001', notes: '重点商业区' },
+  { id: '2', name: '未来之光', personInCharge: '李主任', contact: '13800138002', notes: '新开发区域' },
+  { id: '3', name: '洲际酒店', personInCharge: '王经理', contact: '13800138003', notes: '高端酒店区域' },
+  { id: '4', name: '玉鸟集', personInCharge: '赵主管', contact: '13800138004', notes: '文化创意园区' },
+  { id: '5', name: '医院', personInCharge: '刘院长', contact: '13800138005', notes: '医疗重点区域' },
+  { id: '6', name: '地铁口', personInCharge: '孙队长', contact: '13800138006', notes: '交通枢纽' },
+  { id: '7', name: '学校', personInCharge: '周主任', contact: '13800138007', notes: '教育区域' },
+];
+
 const BasicDataMaintenancePage: React.FC = () => {
   const navigate = useNavigate();
-  
+
   // 状态管理
-  const [activeTab, setActiveTab] = useState<'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'vehicleReg'>('roads');
+  const [activeTab, setActiveTab] = useState<'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'vehicleReg' | 'keyArea'>('roads');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  
+
   // 数据状态
   const [roads, setRoads] = useState<Road[]>(mockRoads);
   const [toilets, setToilets] = useState<Toilet[]>(mockToilets);
   const [greening, setGreening] = useState<Greening[]>(mockGreening);
-  
+  const [keyAreas, setKeyAreas] = useState<KeyArea[]>(() => {
+    const saved = localStorage.getItem('keyAreas');
+    return saved ? JSON.parse(saved) : mockKeyAreas;
+  });
+
   // 表单状态
   const [formData, setFormData] = useState<any>({});
+
+  // 保存重点区域数据到 localStorage
+  useEffect(() => {
+    localStorage.setItem('keyAreas', JSON.stringify(keyAreas));
+  }, [keyAreas]);
   
   // 处理返回
   const handleGoBack = () => {
@@ -189,7 +218,7 @@ const BasicDataMaintenancePage: React.FC = () => {
   };
   
   // 处理标签切换
-  const handleTabChange = (tab: 'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'vehicleReg') => {
+  const handleTabChange = (tab: 'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'vehicleReg' | 'keyArea') => {
     setActiveTab(tab);
     setEditingItem(null);
     setShowAddModal(false);
@@ -222,6 +251,9 @@ const BasicDataMaintenancePage: React.FC = () => {
         case 'greening':
           setGreening(greening.filter(item => item.id !== id));
           break;
+        case 'keyArea':
+          setKeyAreas(keyAreas.filter(item => item.id !== id));
+          break;
       }
     }
   };
@@ -239,6 +271,9 @@ const BasicDataMaintenancePage: React.FC = () => {
           break;
         case 'greening':
           setGreening(greening.map(item => item.id === editingItem.id ? formData : item));
+          break;
+        case 'keyArea':
+          setKeyAreas(keyAreas.map(item => item.id === editingItem.id ? formData : item));
           break;
       }
     } else {
@@ -259,6 +294,9 @@ const BasicDataMaintenancePage: React.FC = () => {
         case 'greening':
           setGreening([...greening, newItem as Greening]);
           break;
+        case 'keyArea':
+          setKeyAreas([...keyAreas, newItem as KeyArea]);
+          break;
       }
     }
     setShowAddModal(false);
@@ -277,19 +315,24 @@ const BasicDataMaintenancePage: React.FC = () => {
   const filteredData = () => {
     switch (activeTab) {
       case 'roads':
-        return roads.filter(road => 
+        return roads.filter(road =>
           road.roadName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           road.roadSection.toLowerCase().includes(searchTerm.toLowerCase())
         );
       case 'toilets':
-        return toilets.filter(toilet => 
+        return toilets.filter(toilet =>
           toilet.toiletName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           toilet.address.toLowerCase().includes(searchTerm.toLowerCase())
         );
       case 'greening':
-        return greening.filter(item => 
+        return greening.filter(item =>
           item.roadName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.roadSection.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      case 'keyArea':
+        return keyAreas.filter(item =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.personInCharge.toLowerCase().includes(searchTerm.toLowerCase())
         );
       default:
         return [];
@@ -356,6 +399,12 @@ const BasicDataMaintenancePage: React.FC = () => {
         >
           车辆备案管理
         </button>
+        <button
+          onClick={() => handleTabChange('keyArea')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'keyArea' ? 'bg-[#00e5ff] text-[#0a1628]' : 'bg-[#1e4976] text-white hover:bg-[#2a5a8a]'}`}
+        >
+          重点区域维护
+        </button>
       </div>
       
       {/* 搜索栏 */}
@@ -405,6 +454,16 @@ const BasicDataMaintenancePage: React.FC = () => {
                   <th className="px-4 py-3 text-left">面积</th>
                   <th className="px-4 py-3 text-left">单位</th>
                   <th className="px-4 py-3 text-left">类别</th>
+                  <th className="px-4 py-3 text-left">备注</th>
+                  <th className="px-4 py-3 text-right">操作</th>
+                </tr>
+              )}
+              {activeTab === 'keyArea' && (
+                <tr className="bg-[#1e4976]">
+                  <th className="px-4 py-3 text-left">序号</th>
+                  <th className="px-4 py-3 text-left">重点区域名称</th>
+                  <th className="px-4 py-3 text-left">区域负责人</th>
+                  <th className="px-4 py-3 text-left">联系方式</th>
                   <th className="px-4 py-3 text-left">备注</th>
                   <th className="px-4 py-3 text-right">操作</th>
                 </tr>
@@ -483,13 +542,38 @@ const BasicDataMaintenancePage: React.FC = () => {
                         <td className="px-4 py-3">{item.notes}</td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex justify-end gap-2">
-                            <button 
+                            <button
                               onClick={() => handleEditClick(item)}
                               className="p-2 hover:bg-[#1e4976] rounded-lg transition-colors"
                             >
                               <Edit size={16} />
                             </button>
-                            <button 
+                            <button
+                              onClick={() => handleDeleteClick(item.id)}
+                              className="p-2 hover:bg-[#1e4976] rounded-lg transition-colors"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    )}
+                    {activeTab === 'keyArea' && (
+                      <>
+                        <td className="px-4 py-3">{index + 1}</td>
+                        <td className="px-4 py-3">{item.name}</td>
+                        <td className="px-4 py-3">{item.personInCharge}</td>
+                        <td className="px-4 py-3">{item.contact}</td>
+                        <td className="px-4 py-3">{item.notes}</td>
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleEditClick(item)}
+                              className="p-2 hover:bg-[#1e4976] rounded-lg transition-colors"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
                               onClick={() => handleDeleteClick(item.id)}
                               className="p-2 hover:bg-[#1e4976] rounded-lg transition-colors"
                             >
@@ -712,6 +796,51 @@ const BasicDataMaintenancePage: React.FC = () => {
                       <option value="一类">一类</option>
                       <option value="二类">二类</option>
                     </select>
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">备注</label>
+                    <textarea
+                      name="notes"
+                      value={formData.notes || ''}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white"
+                      rows={3}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'keyArea' && (
+                <>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">重点区域名称</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name || ''}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">区域负责人</label>
+                    <input
+                      type="text"
+                      name="personInCharge"
+                      value={formData.personInCharge || ''}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">联系方式</label>
+                    <input
+                      type="text"
+                      name="contact"
+                      value={formData.contact || ''}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white"
+                    />
                   </div>
                   <div>
                     <label className="block mb-2 text-sm font-medium">备注</label>
