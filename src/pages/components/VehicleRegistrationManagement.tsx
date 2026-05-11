@@ -186,9 +186,13 @@ const VehicleRegistrationManagement: React.FC = () => {
         vehicle.id === editingVehicle.id ? editingVehicle : vehicle
       ));
     } else {
-      const newVehicle = {
+      const newVehicle: Vehicle = {
         ...editingVehicle,
         id: Date.now().toString(),
+        approvalStatus: 'pending',
+        approvalNodes: [
+          { status: 'pending', timestamp: new Date().toLocaleString('zh-CN'), operator: '系统', message: '提交备案审批' },
+        ],
       };
       setVehicles([...vehicles, newVehicle]);
     }
@@ -659,7 +663,7 @@ const VehicleRegistrationManagement: React.FC = () => {
                 onClick={handleSaveVehicle}
                 className="px-4 py-2 bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] text-[#0e2a47] rounded-lg hover:shadow-lg hover:shadow-[#00e5ff]/30 transition-colors font-medium"
               >
-                保存
+                {editingVehicle?.id ? '保存' : '提交审批'}
               </button>
             </div>
           </div>
