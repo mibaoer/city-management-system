@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, Search, Filter, ChevronDown, ChevronUp, X, Save, X as Cancel } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Search, Filter, ChevronDown, ChevronUp, X, Save, X as Cancel, Upload, Download, RefreshCw } from 'lucide-react';
 import VehicleManagementPage from './VehicleManagementPage';
 import ConstructionWastePointManagement from './components/ConstructionWastePointManagement';
 
@@ -206,6 +206,12 @@ const BasicDataMaintenancePage: React.FC = () => {
   // 表单状态
   const [formData, setFormData] = useState<any>({});
 
+  // 筛选状态
+  const [filterType, setFilterType] = useState('all');
+  const [filterToiletType, setFilterToiletType] = useState('all');
+  const [filterKeyAreaName, setFilterKeyAreaName] = useState('');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   // 保存重点区域数据到 localStorage
   useEffect(() => {
     localStorage.setItem('keyAreas', JSON.stringify(keyAreas));
@@ -301,6 +307,75 @@ const BasicDataMaintenancePage: React.FC = () => {
     setShowAddModal(false);
   };
   
+  // 导出数据
+  const handleExport = () => {
+    const data = filteredData();
+    if (data.length === 0) {
+      alert('暂无数据可导出');
+      return;
+    }
+    const headers = Object.keys(data[0]).filter(k => k !== 'id');
+    const csvContent = [
+      headers.join(','),
+      ...data.map(row => headers.map(h => `"${String(row[h]).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    const BOM = '﻿';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${activeTab}_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+  };
+
+  // 触发文件选择
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // 处理文件导入
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result as string;
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length < 2) { alert('文件格式不正确'); return; }
+        const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+        const newData = lines.slice(1).map((line, i) => {
+          const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+          const obj: any = { id: (Date.now() + i).toString() };
+          headers.forEach((h, j) => {
+            const val = (values[j] || '').replace(/"/g, '').trim();
+            obj[h] = isNaN(Number(val)) || h.includes('Name') || h.includes('name') || h.includes('Number') || h.includes('address') || h.includes('section') || h.includes('type') || h.includes('notes') || h.includes('person') || h.includes('contact') || h.includes('toilet') ? val : Number(val);
+          });
+          return obj;
+        });
+        if (newData.length === 0) { alert('未解析到数据'); return; }
+        switch (activeTab) {
+          case 'roads': setRoads(prev => [...prev, ...newData as Road[]]); break;
+          case 'toilets': setToilets(prev => [...prev, ...newData as Toilet[]]); break;
+          case 'greening': setGreening(prev => [...prev, ...newData as Greening[]]); break;
+          case 'keyArea': setKeyAreas(prev => [...prev, ...newData as KeyArea[]]); break;
+        }
+        alert(`成功导入 ${newData.length} 条数据`);
+      } catch {
+        alert('文件解析失败，请检查CSV格式');
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+    e.target.value = '';
+  };
+
+  // 重置筛选
+  const handleResetFilter = () => {
+    setSearchTerm('');
+    setFilterType('all');
+    setFilterToiletType('all');
+    setFilterKeyAreaName('');
+  };
+
   // 处理表单输入变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -314,25 +389,33 @@ const BasicDataMaintenancePage: React.FC = () => {
   const filteredData = () => {
     switch (activeTab) {
       case 'roads':
-        return roads.filter(road =>
-          road.roadName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          road.roadSection.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return roads.filter(road => {
+          const matchSearch = road.roadName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            road.roadSection.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchType = filterType === 'all' || road.type === filterType;
+          return matchSearch && matchType;
+        });
       case 'toilets':
-        return toilets.filter(toilet =>
-          toilet.toiletName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          toilet.address.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return toilets.filter(toilet => {
+          const matchSearch = toilet.toiletName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            toilet.address.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchType = filterToiletType === 'all' || toilet.toiletType === filterToiletType;
+          return matchSearch && matchType;
+        });
       case 'greening':
-        return greening.filter(item =>
-          item.roadName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.roadSection.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return greening.filter(item => {
+          const matchSearch = item.roadName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.roadSection.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchType = filterType === 'all' || item.type === filterType;
+          return matchSearch && matchType;
+        });
       case 'keyArea':
-        return keyAreas.filter(item =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.personInCharge.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return keyAreas.filter(item => {
+          const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.personInCharge.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchName = !filterKeyAreaName || item.name.includes(filterKeyAreaName);
+          return matchSearch && matchName;
+        });
       default:
         return [];
     }
@@ -400,16 +483,93 @@ const BasicDataMaintenancePage: React.FC = () => {
         </button>
       </div>
       
-      {/* 搜索栏 */}
-      <div className="relative mb-6">
+      {/* 查询条件 + 导入导出 */}
+      <div className="mb-6 space-y-3">
+        {/* 查询条件 */}
+        <div className="grid grid-cols-4 gap-3 items-end">
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">
+              {activeTab === 'roads' ? '道路类别' : activeTab === 'greening' ? '绿化类别' : activeTab === 'toilets' ? '公厕类别' : activeTab === 'keyArea' ? '区域名称' : '类别'}
+            </label>
+            {activeTab === 'keyArea' ? (
+              <input
+                type="text"
+                placeholder="请输入名称"
+                value={filterKeyAreaName}
+                onChange={(e) => setFilterKeyAreaName(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white text-sm"
+              />
+            ) : (
+              <select
+                value={activeTab === 'toilets' ? filterToiletType : filterType}
+                onChange={(e) => activeTab === 'toilets' ? setFilterToiletType(e.target.value) : setFilterType(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white text-sm"
+              >
+                <option value="all">全部</option>
+                {activeTab === 'roads' && (
+                  <>
+                    <option value="一类">一类</option>
+                    <option value="二类">二类</option>
+                  </>
+                )}
+                {activeTab === 'greening' && (
+                  <>
+                    <option value="一类">一类</option>
+                    <option value="二类">二类</option>
+                  </>
+                )}
+                {activeTab === 'toilets' && (
+                  <>
+                    <option value="标准公厕">标准公厕</option>
+                  </>
+                )}
+              </select>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">关键词搜索</label>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="请输入关键词"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 pl-9 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white text-sm"
+              />
+              <Search size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
+          </div>
+          <button
+            onClick={handleResetFilter}
+            className="px-4 py-2 bg-[#1e4976] border border-[#1e4976] text-white rounded-lg hover:bg-[#2d5a8a] transition-colors font-medium text-sm flex items-center gap-1.5"
+          >
+            <RefreshCw size={14} />
+            重置
+          </button>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={handleImportClick}
+              className="px-4 py-2 bg-[#1e4976] border border-[#1e4976] text-white rounded-lg hover:bg-[#2d5a8a] transition-colors font-medium text-sm flex items-center gap-1.5"
+            >
+              <Upload size={14} />
+              导入
+            </button>
+            <button
+              onClick={handleExport}
+              className="px-4 py-2 bg-[#00e5ff] text-[#0a1628] rounded-lg hover:bg-[#00e5ff]/90 transition-colors font-medium text-sm flex items-center gap-1.5"
+            >
+              <Download size={14} />
+              导出
+            </button>
+          </div>
+        </div>
         <input
-          type="text"
-          placeholder="搜索..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 pl-10 bg-[#1e4976] border border-[#3a6da6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] text-white"
+          ref={fileInputRef}
+          type="file"
+          accept=".csv"
+          onChange={handleFileImport}
+          className="hidden"
         />
-        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
       
       {/* 数据表格 */}
