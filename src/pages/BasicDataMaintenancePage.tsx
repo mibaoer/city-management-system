@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit, Trash2, Search, Filter, ChevronDown, ChevronUp, X, Save, X as Cancel } from 'lucide-react';
 import VehicleManagementPage from './VehicleManagementPage';
-import VehicleRegistrationManagement from './components/VehicleRegistrationManagement';
 import ConstructionWastePointManagement from './components/ConstructionWastePointManagement';
 
 // 道路数据接口
@@ -190,7 +189,7 @@ const BasicDataMaintenancePage: React.FC = () => {
   const navigate = useNavigate();
 
   // 状态管理
-  const [activeTab, setActiveTab] = useState<'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'vehicleReg' | 'keyArea'>('roads');
+  const [activeTab, setActiveTab] = useState<'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'keyArea'>('roads');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -218,7 +217,7 @@ const BasicDataMaintenancePage: React.FC = () => {
   };
   
   // 处理标签切换
-  const handleTabChange = (tab: 'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'vehicleReg' | 'keyArea') => {
+  const handleTabChange = (tab: 'roads' | 'toilets' | 'greening' | 'vehicles' | 'point' | 'keyArea') => {
     setActiveTab(tab);
     setEditingItem(null);
     setShowAddModal(false);
@@ -392,12 +391,6 @@ const BasicDataMaintenancePage: React.FC = () => {
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'point' ? 'bg-[#00e5ff] text-[#0a1628]' : 'bg-[#1e4976] text-white hover:bg-[#2a5a8a]'}`}
         >
           点位信息维护
-        </button>
-        <button
-          onClick={() => handleTabChange('vehicleReg')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'vehicleReg' ? 'bg-[#00e5ff] text-[#0a1628]' : 'bg-[#1e4976] text-white hover:bg-[#2a5a8a]'}`}
-        >
-          车辆备案管理
         </button>
         <button
           onClick={() => handleTabChange('keyArea')}
@@ -602,13 +595,6 @@ const BasicDataMaintenancePage: React.FC = () => {
       {activeTab === 'point' && (
         <div className="bg-[#0d1b2a] border border-[#1e4976] rounded-lg">
           <ConstructionWastePointManagement />
-        </div>
-      )}
-
-      {/* 车辆备案管理 tab 内容 */}
-      {activeTab === 'vehicleReg' && (
-        <div className="bg-[#0d1b2a] border border-[#1e4976] rounded-lg">
-          <VehicleRegistrationManagement />
         </div>
       )}
 

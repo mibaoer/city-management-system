@@ -25,6 +25,7 @@ import UrbanManagementPage from "@/pages/UrbanManagementPage";
 import AIDailySummaryPage from "@/pages/AIDailySummaryPage";
 import BasicDataMaintenancePage from "@/pages/BasicDataMaintenancePage";
 import ContractManagementPage from "@/pages/ContractManagementPage";
+import VehicleRegistrationManagement from "@/pages/components/VehicleRegistrationManagement";
 import { useState } from "react";
 import { AuthContext } from '@/contexts/authContext';
 
@@ -75,6 +76,7 @@ export default function App() {
       <Route path="/ai-daily-summary" element={<AIDailySummaryPage />} />
       <Route path="/basic-data-maintenance" element={<BasicDataMaintenancePage />} />
       <Route path="/contract-management" element={<ContractManagementPage />} />
+      <Route path="/vehicle-registration-management" element={<VehicleRegistrationManagement />} />
       </Routes>
     </AuthContext.Provider>
   );

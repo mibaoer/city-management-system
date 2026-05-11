@@ -108,7 +108,23 @@ const DashboardPage: React.FC = () => {
   
   // 添加导航钩子
   const navigate = useNavigate();
-  
+
+  // 车辆备案待审批数量
+  const [pendingVehicleRegCount, setPendingVehicleRegCount] = useState(0);
+
+  useEffect(() => {
+    try {
+      const data = localStorage.getItem('vehicleRegistrations');
+      if (data) {
+        const vehicles = JSON.parse(data);
+        const count = vehicles.filter((v: any) => v.approvalStatus === 'pending').length;
+        setPendingVehicleRegCount(count);
+      }
+    } catch {
+      setPendingVehicleRegCount(0);
+    }
+  }, []);
+
   // 选择菜单状态管理
   const [isSelectionMenuOpen, setIsSelectionMenuOpen] = useState(false);
   
@@ -1503,8 +1519,26 @@ const DashboardPage: React.FC = () => {
                 <div className="absolute -right-3 -bottom-3 w-12 h-12 bg-[#00e5ff]/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
               </div>
               
+              {/* 车辆备案管理模块 */}
+              <div
+                onClick={() => navigate('/vehicle-registration-management')}
+                className="group relative bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] p-3 rounded-lg border border-[#1e4976] hover:border-[#00e5ff] transition-all duration-300 hover:shadow-lg hover:shadow-[#00e5ff]/20 overflow-hidden cursor-pointer w-48 h-28 shrink-0 flex flex-col justify-between"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00e5ff]/0 to-[#00e5ff]/0 group-hover:from-[#00e5ff]/5 group-hover:to-[#00e5ff]/10 transition-all duration-300"></div>
+                <div className="absolute left-0 top-0 w-1 h-0 bg-gradient-to-b from-[#00e5ff] to-transparent group-hover:h-full transition-all duration-500"></div>
+                <div className="relative z-10">
+                  <h3 className="text-xs font-bold text-white truncate">车辆备案管理</h3>
+                  <div className="text-[10px] text-gray-400 mt-1">车辆备案审批</div>
+                </div>
+                <div className="relative z-10">
+                  <div className="text-xl font-bold text-[#00e5ff] pb-1">{pendingVehicleRegCount}条</div>
+                  <div className="text-[10px] text-gray-500">待审批</div>
+                </div>
+                <div className="absolute -right-3 -bottom-3 w-12 h-12 bg-[#00e5ff]/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+              </div>
+
               {/* 基础数据维护模块 */}
-              <div 
+              <div
                 onClick={() => navigate('/basic-data-maintenance')}
                 className="group relative bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] p-3 rounded-lg border border-[#1e4976] hover:border-[#00e5ff] transition-all duration-300 hover:shadow-lg hover:shadow-[#00e5ff]/20 overflow-hidden cursor-pointer w-48 h-28 shrink-0 flex flex-col justify-between"
               >
@@ -1515,7 +1549,7 @@ const DashboardPage: React.FC = () => {
                   <div className="text-[10px] text-gray-400 mt-1">维护道路、公厕、绿化等基础数据</div>
                 </div>
                 <div className="relative z-10">
-                  <div className="text-xl font-bold text-[#00e5ff] pb-1">6类</div>
+                  <div className="text-xl font-bold text-[#00e5ff] pb-1">5类</div>
                   <div className="text-[10px] text-gray-500">支持增删改查</div>
                 </div>
                 <div className="absolute -right-3 -bottom-3 w-12 h-12 bg-[#00e5ff]/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
