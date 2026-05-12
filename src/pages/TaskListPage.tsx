@@ -686,6 +686,41 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   const handleGoBack = () => {
     navigate(-1);
   };
+
+  // 查看任务详情
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewingTask, setViewingTask] = useState<Task | null>(null);
+
+  const handleViewTask = (task: Task) => {
+    setViewingTask(task);
+    setShowViewModal(true);
+  };
+
+  const closeViewModal = () => {
+    setShowViewModal(false);
+    setViewingTask(null);
+  };
+
+  // 编辑任务
+  const handleEditTask = (task: Task) => {
+    setFormData({
+      taskName: task.taskName,
+      taskType: task.taskType,
+      functionCategory: task.functionCategory,
+      keyArea: task.keyArea,
+      mainRoad: task.mainRoad,
+      description: task.description,
+      team: task.team,
+      assignees: task.assignees,
+      area: task.area,
+      address: task.address,
+      startDate: task.startDate,
+      endDate: task.endDate,
+      frequencyType: 'once',
+      frequencyValue: 1,
+    });
+    setShowCreateModal(true);
+  };
   
   // 获取人员姓名
   const getPersonName = (personId: string) => {
@@ -1359,10 +1394,16 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button 
-                        className="text-[#00e5ff] hover:text-[#00ffb2] transition-colors"
-                        onClick={(e) => e.stopPropagation()}
+                        className="text-[#00e5ff] hover:text-[#00ffb2] transition-colors mr-3"
+                        onClick={(e) => { e.stopPropagation(); handleViewTask(task); }}
                       >
-                        <MoreHorizontal size={20} />
+                        查看
+                      </button>
+                      <button 
+                        className="text-gray-400 hover:text-white transition-colors"
+                        onClick={(e) => { e.stopPropagation(); handleEditTask(task); }}
+                      >
+                        编辑
                       </button>
                     </td>
                   </tr>
@@ -1413,6 +1454,140 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
           getKeyAreaName={getKeyAreaName}
           getMainRoadName={getMainRoadName}
         />
+      )}
+
+      {/* 查看任务详情弹窗 */}
+      {showViewModal && viewingTask && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-[#1e4976]">
+            {/* 弹窗头部 */}
+            <div className="flex items-center justify-between p-6 border-b border-[#1e4976]">
+              <div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-[#00e5ff] via-white to-[#00ffb2] bg-clip-text text-transparent">任务详情</h3>
+                <p className="text-sm text-gray-300 mt-1">查看任务的详细信息</p>
+              </div>
+              <button
+                onClick={closeViewModal}
+                className="text-gray-400 hover:text-white transition-colors text-xl"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* 弹窗内容 */}
+            <div className="p-6 space-y-6">
+              {/* 基本信息 */}
+              <div>
+                <h4 className="text-sm font-medium text-[#00e5ff] mb-3">基本信息</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">任务名称</label>
+                    <p className="text-white">{viewingTask.taskName}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">任务类型</label>
+                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                      style={{
+                        backgroundColor: `${TASK_TYPES.find(t => t.id.toString() === viewingTask.taskType)?.color || '#6b7280'}20`,
+                        color: TASK_TYPES.find(t => t.id.toString() === viewingTask.taskType)?.color || '#6b7280'
+                      }}
+                    >
+                      {getTaskTypeName(viewingTask.taskType)}
+                    </span>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">职能分类</label>
+                    <p className="text-white">{getFunctionCategoryName(viewingTask.functionCategory)}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">重点区域</label>
+                    <p className="text-white">{getKeyAreaName(viewingTask.keyArea)}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">主要道路</label>
+                    <p className="text-white">{getMainRoadName(viewingTask.mainRoad)}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">执行团队</label>
+                    <p className="text-white">{getTeamName(viewingTask.team)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 执行信息 */}
+              <div>
+                <h4 className="text-sm font-medium text-[#00e5ff] mb-3">执行信息</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">执行人员</label>
+                    <div className="flex flex-wrap gap-1">
+                      {viewingTask.assignees.map((assigneeId) => (
+                        <span key={assigneeId} className="px-2 py-0.5 text-xs rounded-full bg-[#1e4976] text-white">
+                          {getPersonName(assigneeId)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">区域</label>
+                    <p className="text-white">{viewingTask.area}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">详细地址</label>
+                    <p className="text-white">{viewingTask.address}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">任务状态</label>
+                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                      style={{ backgroundColor: `${getTaskStatusInfo(viewingTask.status).color}20`, color: getTaskStatusInfo(viewingTask.status).color }}
+                    >
+                      {getTaskStatusInfo(viewingTask.status).name}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 时间信息 */}
+              <div>
+                <h4 className="text-sm font-medium text-[#00e5ff] mb-3">时间信息</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">开始日期</label>
+                    <p className="text-white">{viewingTask.startDate}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">结束日期</label>
+                    <p className="text-white">{viewingTask.endDate}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 任务描述 */}
+              <div>
+                <h4 className="text-sm font-medium text-[#00e5ff] mb-3">任务描述</h4>
+                <div className="bg-[#0a1628] p-4 rounded-lg">
+                  <p className="text-white">{viewingTask.description}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 弹窗底部 */}
+            <div className="flex justify-end gap-3 p-6 border-t border-[#1e4976]">
+              <button
+                onClick={() => { handleEditTask(viewingTask); closeViewModal(); }}
+                className="px-6 py-2 border border-[#00e5ff] text-[#00e5ff] hover:bg-[#00e5ff]/10 rounded-lg transition-colors"
+              >
+                编辑任务
+              </button>
+              <button
+                onClick={closeViewModal}
+                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              >
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 新建任务弹窗 */}
