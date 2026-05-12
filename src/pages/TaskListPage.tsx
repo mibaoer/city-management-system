@@ -267,7 +267,6 @@ const CheckRecordTab: React.FC<{
           <button className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded transition-colors">查询</button>
           <button onClick={resetFilters} className="px-4 py-2 border border-gray-600 text-gray-300 text-sm rounded hover:bg-gray-700 transition-colors">重置</button>
           <div className="flex-1" />
-          <button className="px-4 py-2 border border-[#00e5ff] text-[#00e5ff] text-sm rounded hover:bg-[#00e5ff]/10 transition-colors">统计导出</button>
           <button className="px-4 py-2 border border-[#00e5ff] text-[#00e5ff] text-sm rounded hover:bg-[#00e5ff]/10 transition-colors">台账导出</button>
         </div>
       </div>
