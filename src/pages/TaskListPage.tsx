@@ -23,6 +23,25 @@ const TEAMS = [
   { id: 'sequence', name: '序化管理团队' },
 ];
 
+// 任务频率
+const FREQUENCY_TYPES = [
+  { value: 'daily', label: '每日' },
+  { value: 'weekly', label: '每周' },
+  { value: 'monthly', label: '每月' },
+  { value: 'quarterly', label: '每季度' },
+  { value: 'semiannual', label: '每半年' },
+  { value: 'annual', label: '每年' },
+];
+
+const FREQUENCY_UNITS: Record<string, string> = {
+  daily: '天',
+  weekly: '周',
+  monthly: '月',
+  quarterly: '季度',
+  semiannual: '半年',
+  annual: '年',
+};
+
 // 任务状态
 const TASK_STATUS = [
   { id: 'pending', name: '待处理', color: '#f59e0b' },
@@ -193,7 +212,9 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
     assignees: [] as string[], // 改为数组支持多选
     address: '',
     startDate: '',
-    endDate: ''
+    endDate: '',
+    frequencyType: 'once',
+    frequencyValue: 1,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -407,6 +428,8 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
       address: '',
       startDate: '',
       endDate: '',
+      frequencyType: 'once',
+      frequencyValue: 1,
     });
     setSelectedDepartments([]);
     setSelectedFunctionCategories([]);
@@ -1251,7 +1274,98 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   </div>
                 </div>
               </div>
-              
+
+              {/* 任务频率 */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
+                  <div className="w-1 h-6 bg-[#00e5ff] rounded-full mr-3"></div>
+                  任务频率
+                </h2>
+
+                {/* 频率类型选择 */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                    选择频率类型
+                  </label>
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, frequencyType: 'once' }))}
+                      className={`px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                        formData.frequencyType === 'once'
+                          ? 'border-[#00e5ff] bg-[#00e5ff]/10 text-[#00e5ff]'
+                          : 'border-[#1e4976] bg-[#0a1628] text-gray-300 hover:border-[#00e5ff]/50'
+                      }`}
+                    >
+                      仅一次
+                    </button>
+                    {FREQUENCY_TYPES.map(ft => (
+                      <button
+                        key={ft.value}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, frequencyType: ft.value }))}
+                        className={`px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                          formData.frequencyType === ft.value
+                            ? 'border-[#00e5ff] bg-[#00e5ff]/10 text-[#00e5ff]'
+                            : 'border-[#1e4976] bg-[#0a1628] text-gray-300 hover:border-[#00e5ff]/50'
+                        }`}
+                      >
+                        {ft.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 频率次数设置 */}
+                {formData.frequencyType !== 'once' && formData.frequencyType !== 'daily' && (
+                  <div className="flex items-center gap-4 mb-4">
+                    <label className="block text-sm font-medium text-gray-300">
+                      每
+                      <span className="text-[#00e5ff] mx-1">{FREQUENCY_UNITS[formData.frequencyType]}</span>
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, frequencyValue: Math.max(1, prev.frequencyValue - 1) }))}
+                        className="w-8 h-8 rounded-lg border border-[#1e4976] flex items-center justify-center hover:bg-[#1e4976] text-gray-300"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        min={1}
+                        value={formData.frequencyValue}
+                        onChange={e => setFormData(prev => ({ ...prev, frequencyValue: Math.max(1, parseInt(e.target.value) || 1) }))}
+                        className="w-16 px-2 py-1.5 border border-[#1e4976] rounded-lg bg-[#0a1628] text-center text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, frequencyValue: Math.min(30, prev.frequencyValue + 1) }))}
+                        className="w-8 h-8 rounded-lg border border-[#1e4976] flex items-center justify-center hover:bg-[#1e4976] text-gray-300"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-300">
+                      <span className="text-[#00e5ff]">次</span>
+                    </label>
+                    <span className="text-sm text-gray-400">
+                      即每{FREQUENCY_UNITS[formData.frequencyType]}执行 {formData.frequencyValue} 次
+                    </span>
+                  </div>
+                )}
+
+                {/* 频率预览 */}
+                <div className="p-3 bg-[#1e4976]/50 border border-[#1e4976] rounded-lg">
+                  <p className="text-sm text-gray-300">
+                    <strong className="text-[#00e5ff]">频率设置：</strong>{' '}
+                    {formData.frequencyType === 'once' ? '仅执行一次' :
+                     formData.frequencyType === 'daily' ? '每日执行' :
+                     `每${formData.frequencyValue}${FREQUENCY_UNITS[formData.frequencyType]}执行一次`}
+                  </p>
+                </div>
+              </div>
+
               {/* 附件上传 */}
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
