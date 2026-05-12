@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, X, Plus, Users, User, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Save, X, Plus, Users, User, ChevronDown, Calendar, Repeat } from 'lucide-react';
 import { usePeople } from '@/hooks/usePeople';
 
 // 任务类型（使用职能分类）
@@ -23,6 +23,25 @@ const TEAMS = [
   { id: 'sequence', name: '序化管理团队' },
 ];
 
+// 任务频率
+const FREQUENCY_TYPES = [
+  { value: 'daily', label: '每日', icon: '每日' },
+  { value: 'weekly', label: '每周', icon: '每周' },
+  { value: 'monthly', label: '每月', icon: '每月' },
+  { value: 'quarterly', label: '每季度', icon: '每季度' },
+  { value: 'semiannual', label: '每半年', icon: '每半年' },
+  { value: 'annual', label: '每年', icon: '每年' },
+];
+
+const FREQUENCY_UNITS: Record<string, string> = {
+  daily: '天',
+  weekly: '周',
+  monthly: '月',
+  quarterly: '季度',
+  semiannual: '半年',
+  annual: '年',
+};
+
 export default function TaskCreatePage() {
   const navigate = useNavigate();
   const { getAllPeople, getDepartments } = usePeople();
@@ -42,6 +61,8 @@ export default function TaskCreatePage() {
     address: '',
     startDate: '',
     endDate: '',
+    frequencyType: 'once' as string,
+    frequencyValue: 1,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -247,6 +268,8 @@ export default function TaskCreatePage() {
       address: '',
       startDate: '',
       endDate: '',
+      frequencyType: 'once',
+      frequencyValue: 1,
     });
     setSelectedDepartments([]);
     setSelectedFunctionCategories([]);
@@ -473,6 +496,99 @@ export default function TaskCreatePage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* 任务频率 */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+              <div className="w-1 h-6 bg-blue-600 rounded-full mr-3"></div>
+              任务频率
+            </h2>
+
+            {/* 频率类型选择 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                选择频率类型
+              </label>
+              <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, frequencyType: 'once' }))}
+                  className={`px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                    formData.frequencyType === 'once'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-blue-300'
+                  }`}
+                >
+                  仅一次
+                </button>
+                {FREQUENCY_TYPES.map(ft => (
+                  <button
+                    key={ft.value}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, frequencyType: ft.value }))}
+                    className={`px-3 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                      formData.frequencyType === ft.value
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-blue-300'
+                    }`}
+                  >
+                    {ft.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 频率次数设置 */}
+            {formData.frequencyType !== 'once' && formData.frequencyType !== 'daily' && (
+              <div className="flex items-center gap-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  每
+                  <span className="text-gray-500 mx-1">{FREQUENCY_UNITS[formData.frequencyType]}</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, frequencyValue: Math.max(1, prev.frequencyValue - 1) }))}
+                    className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    min={1}
+                    value={formData.frequencyValue}
+                    onChange={e => setFormData(prev => ({ ...prev, frequencyValue: Math.max(1, parseInt(e.target.value) || 1) }))}
+                    className="w-16 px-2 py-1.5 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, frequencyValue: Math.min(30, prev.frequencyValue + 1) }))}
+                    className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600"
+                  >
+                    +
+                  </button>
+                </div>
+                <label className="block text-sm font-medium text-gray-700">
+                  <span className="text-gray-500">次</span>
+                </label>
+                <span className="text-sm text-gray-500">
+                  即每{FREQUENCY_UNITS[formData.frequencyType]}执行 {formData.frequencyValue} 次
+                </span>
+              </div>
+            )}
+
+            {/* 频率预览 */}
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                <Calendar size={14} className="inline mr-1" />
+                频率设置：{
+                  formData.frequencyType === 'once' ? '仅执行一次' :
+                  formData.frequencyType === 'daily' ? '每日执行' :
+                  `每${formData.frequencyValue}${FREQUENCY_UNITS[formData.frequencyType]}执行一次`
+                }
+              </p>
             </div>
           </div>
 
