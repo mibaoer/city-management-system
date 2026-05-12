@@ -24,7 +24,7 @@ interface HazardType {
     name: string;
 }
 
-type HazardStatus = "pending" | "processing" | "completed" | "rejected" | "refused";
+type HazardStatus = "pendingConfirm" | "pending" | "processing" | "completed" | "rejected" | "refused" | "cancelled";
 
 interface ImageInfo {
     id: string;
@@ -112,7 +112,8 @@ const HazardReportingPage: React.FC = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [descriptionFilter, setDescriptionFilter] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
-    
+    const [eventTab, setEventTab] = useState<'pendingConfirm' | 'pending' | 'all'>('pendingConfirm');
+
     // 整改详情状态
     const [showRectificationModal, setShowRectificationModal] = useState(false);
     const [rectificationImages, setRectificationImages] = useState<string[]>([]);
@@ -133,6 +134,10 @@ const HazardReportingPage: React.FC = () => {
     const [showTransferModal, setShowTransferModal] = useState(false);
     const [selectedTransferUser, setSelectedTransferUser] = useState("");
     const [transferRemark, setTransferRemark] = useState("");
+
+    // 无效原因弹窗
+    const [showInvalidModal, setShowInvalidModal] = useState(false);
+    const [invalidReason, setInvalidReason] = useState("");
 
      const [hazardTypes] = useState<HazardType[]>([{
         id: "1",
@@ -186,13 +191,14 @@ const HazardReportingPage: React.FC = () => {
             description: "垃圾桶满溢情况"
         }],
 
-        status: "pending",
+        status: "pendingConfirm",
         reportTime: "2025-10-20 10:30",
         reporter: "张三",
         hazardLevel: "一般事件",
         rectificationMethod: "限期整改",
         rectificationDeadline: "2025-10-25",
-        assignedPerson: "李四"
+        assignedPerson: "李四",
+        整改负责人: "高主任、陈主任"
     }, {
         id: "2",
         title: "分类指示牌损坏",
@@ -297,6 +303,95 @@ const HazardReportingPage: React.FC = () => {
         completionTime: "2025-10-20 10:15",
         验收人: "吴十",
         验收意见: "验收驳回 - 部分路灯仍不亮"
+    }, {
+        id: "6",
+        title: "人行道地砖松动",
+        description: "商业街人行道多处地砖松动，行人容易绊倒",
+        location: "商业街人行道",
+        type: "设施损坏",
+        images: [{
+            id: "img6-1",
+            type: "hazard",
+            url: "https://space.coze.cn/api/coze_space/gen_image?image_size=landscape_16_9&prompt=Loose%20paving%20bricks%20on%20sidewalk&sign=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+            description: "松动的人行道地砖"
+        }],
+        status: "pendingConfirm",
+        reportTime: "2025-10-21 08:30",
+        reporter: "郑十一",
+        hazardLevel: "一般事件",
+        rectificationMethod: "限期整改",
+        rectificationDeadline: "2025-10-26",
+        assignedPerson: "李四",
+        整改负责人: "高主任、陈主任"
+    }, {
+        id: "7",
+        title: "河道漂浮垃圾",
+        description: "清河段河道内有大量漂浮垃圾，影响水质和环境",
+        location: "清河段",
+        type: "环境问题",
+        images: [{
+            id: "img7-1",
+            type: "hazard",
+            url: "https://space.coze.cn/api/coze_space/gen_image?image_size=landscape_16_9&prompt=Floating%20garbage%20in%20river&sign=b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7",
+            description: "河道漂浮垃圾"
+        }],
+        status: "pending",
+        reportTime: "2025-10-20 14:00",
+        reporter: "王十二",
+        hazardLevel: "一般事件",
+        rectificationMethod: "立即整改",
+        rectificationDeadline: "2025-10-23",
+        assignedPerson: "赵六",
+        整改负责人: "赵六",
+        确认人: "高主任",
+        确认时间: "2025-10-21 09:00",
+        确认结果: "有效事件"
+    }, {
+        id: "8",
+        title: "违规搭建雨棚",
+        description: "小区内多处违规搭建雨棚，影响消防安全",
+        location: "阳光小区",
+        type: "违建问题",
+        images: [{
+            id: "img8-1",
+            type: "hazard",
+            url: "https://space.coze.cn/api/coze_space/gen_image?image_size=landscape_16_9&prompt=Illegal%20rain%20canopy%20in%20residential%20area&sign=c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
+            description: "违规搭建的雨棚"
+        }],
+        status: "processing",
+        reportTime: "2025-10-19 11:30",
+        reporter: "刘十三",
+        hazardLevel: "重大事件",
+        rectificationMethod: "限期整改",
+        rectificationDeadline: "2025-10-28",
+        assignedPerson: "钱七",
+        整改负责人: "钱七",
+        确认人: "陈主任",
+        确认时间: "2025-10-20 08:30",
+        确认结果: "有效事件"
+    }, {
+        id: "9",
+        title: "小区飞线充电",
+        description: "3栋有住户从窗户拉线给电动车充电，存在安全隐患",
+        location: "幸福花园3栋",
+        type: "安全隐患",
+        images: [{
+            id: "img9-1",
+            type: "hazard",
+            url: "https://space.coze.cn/api/coze_space/gen_image?image_size=landscape_16_9&prompt=Electric%20bike%20charging%20cable%20from%20window&sign=d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9",
+            description: "飞线充电情况"
+        }],
+        status: "cancelled",
+        reportTime: "2025-10-18 16:45",
+        reporter: "陈十四",
+        hazardLevel: "一般事件",
+        rectificationMethod: "立即整改",
+        rectificationDeadline: "2025-10-19",
+        assignedPerson: "孙八",
+        确认人: "高主任",
+        确认时间: "2025-10-19 09:00",
+        确认结果: "无效事件",
+        无效原因: "经核实，该住户为物业临时应急充电设备，非飞线充电行为"
     }]);
 
     interface Department {
@@ -691,9 +786,10 @@ const HazardReportingPage: React.FC = () => {
             rectificationDeadline: formData.rectificationDeadline,
             assignedPerson: getPurePersonName(formData.assignedPerson),
             images: [],
-            status: "pending",
+            status: "pendingConfirm",
             reportTime: new Date().toLocaleString("zh-CN"),
-            reporter: "当前用户"
+            reporter: "当前用户",
+            整改负责人: "高主任、陈主任"
         };
 
         setHazards(prev => [newHazard, ...prev]);
@@ -905,6 +1001,78 @@ const HazardReportingPage: React.FC = () => {
         }
     };
 
+    // 确认事件有效 → 进入待整改（显示开始整改、转交按钮）
+    const handleConfirmValid = (hazardId: string) => {
+        setHazards(prev => prev.map(hazard => hazard.id === hazardId ? {
+            ...hazard,
+            status: "pending",
+            确认人: currentUser.name,
+            确认时间: new Date().toLocaleString("zh-CN"),
+            确认结果: "有效事件"
+        } : hazard));
+        toast.success("事件已确认为有效事件，进入待整改状态");
+    };
+
+    // 打开无效原因弹窗
+    const handleConfirmInvalid = (hazardId: string) => {
+        const hazard = hazards.find(h => h.id === hazardId);
+        if (hazard) {
+            setSelectedHazard(hazard);
+            setInvalidReason("");
+            setShowInvalidModal(true);
+        }
+    };
+
+    // 确认无效 → 终止事件
+    const confirmInvalidWithReason = () => {
+        if (!invalidReason.trim()) {
+            toast.error("请填写无效原因");
+            return;
+        }
+        if (selectedHazard) {
+            setHazards(prev => prev.map(hazard => hazard.id === selectedHazard.id ? {
+                ...hazard,
+                status: "cancelled",
+                确认人: currentUser.name,
+                确认时间: new Date().toLocaleString("zh-CN"),
+                确认结果: "无效事件",
+                无效原因: invalidReason
+            } : hazard));
+            toast.success("事件已标记为无效事件，状态终止");
+            setShowInvalidModal(false);
+        }
+    };
+
+    // 打开整改人员分配弹窗
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [selectedAssignee, setSelectedAssignee] = useState("");
+
+    const handleAssignPerson = (hazardId: string) => {
+        const hazard = hazards.find(h => h.id === hazardId);
+        if (hazard) {
+            setSelectedHazard(hazard);
+            setSelectedAssignee(hazard.整改负责人 || "");
+            setShowAssignModal(true);
+        }
+    };
+
+    const confirmAssign = () => {
+        if (!selectedAssignee) {
+            toast.error("请选择整改负责人");
+            return;
+        }
+        if (selectedHazard) {
+            setHazards(prev => prev.map(hazard => hazard.id === selectedHazard.id ? {
+                ...hazard,
+                整改负责人: selectedAssignee,
+                分配人: currentUser.name,
+                分配时间: new Date().toLocaleString("zh-CN")
+            } : hazard));
+            toast.success("整改人员已分配");
+            setShowAssignModal(false);
+        }
+    };
+
     // 处理验收图片上传
     const handleAcceptanceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -976,6 +1144,8 @@ const HazardReportingPage: React.FC = () => {
 
     const getStatusText = (status: HazardStatus) => {
         switch (status) {
+        case "pendingConfirm":
+            return "待确认";
         case "pending":
             return "待处理";
         case "processing":
@@ -986,6 +1156,8 @@ const HazardReportingPage: React.FC = () => {
             return "已驳回";
         case "refused":
             return "拒不整改";
+        case "cancelled":
+            return "已取消";
         default:
             return "未知状态";
         }
@@ -1010,6 +1182,8 @@ const HazardReportingPage: React.FC = () => {
 
     const getStatusStyle = (status: HazardStatus) => {
         switch (status) {
+        case "pendingConfirm":
+            return "bg-orange-100 text-orange-800";
         case "pending":
             return "bg-yellow-100 text-yellow-800";
         case "processing":
@@ -1020,6 +1194,8 @@ const HazardReportingPage: React.FC = () => {
             return "bg-red-100 text-red-800";
         case "refused":
             return "bg-purple-100 text-purple-800";
+        case "cancelled":
+            return "bg-gray-100 text-gray-500";
         default:
             return "bg-gray-100 text-gray-800";
         }
@@ -1366,50 +1542,63 @@ const HazardReportingPage: React.FC = () => {
                         className="w-full py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">提交事件报告
                                                                                                                                                                      </button>
                 </form>}
-                {activeTab === "process" && <div className="space-y-4">
-                    <div className="bg-white rounded-lg p-4 shadow-sm mb-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm text-gray-700 mb-1">事件描述搜索</label>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={descriptionFilter}
-                                        onChange={e => setDescriptionFilter(e.target.value)}
-                                        placeholder="输入关键词搜索事件描述..."
-                                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" />
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                            clipRule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-700 mb-1">状态筛选</label>
-                                <select
-                                    value={statusFilter}
-                                    onChange={e => setStatusFilter(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                    <option value="all">全部状态</option>
-                                    <option value="pending">待处理</option>
-                                    <option value="processing">处理中</option>
-                                    <option value="refused">拒不整改</option>
-                                </select>
-                            </div>
+                {activeTab === "process" && <div className="space-y-4 pb-20">
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={descriptionFilter}
+                                onChange={e => setDescriptionFilter(e.target.value)}
+                                placeholder="输入关键词搜索事件描述..."
+                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                                viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path
+                                    fillRule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clipRule="evenodd" />
+                            </svg>
                         </div>
                     </div>
-                    <h2 className="text-base font-medium">待整改事件</h2>
-                    {hazards.filter(hazard => {
-                        const statusMatch = statusFilter === "all" || hazard.status === statusFilter;
-                        const descriptionMatch = !descriptionFilter || hazard.description && hazard.description.includes(descriptionFilter) || hazard.title && hazard.title.includes(descriptionFilter);
-                        return (hazard.status === "pending" || hazard.status === "processing" || hazard.status === "refused") && statusMatch && descriptionMatch;
-                    }).map(hazard => <div
+                    {(() => {
+                        const pendingConfirmCount = hazards.filter(h => h.status === "pendingConfirm").length;
+                        const pendingCount = hazards.filter(h => h.status === "pending" || h.status === "processing" || h.status === "refused").length;
+                        const allCount = hazards.filter(h => h.status !== "completed" && h.status !== "cancelled").length;
+                        return (
+                            <div className="flex bg-white rounded-lg shadow-sm overflow-hidden sticky bottom-0">
+                                <button
+                                    onClick={() => setEventTab('pendingConfirm')}
+                                    className={`flex-1 py-3 text-center text-sm font-medium transition-colors border-b-2 ${eventTab === 'pendingConfirm' ? 'border-green-600 text-green-600 bg-green-50' : 'border-transparent text-gray-500'}`}>
+                                    待确认 <span className="ml-1 text-xs">({pendingConfirmCount})</span>
+                                </button>
+                                <button
+                                    onClick={() => setEventTab('pending')}
+                                    className={`flex-1 py-3 text-center text-sm font-medium transition-colors border-b-2 ${eventTab === 'pending' ? 'border-green-600 text-green-600 bg-green-50' : 'border-transparent text-gray-500'}`}>
+                                    待处理 <span className="ml-1 text-xs">({pendingCount})</span>
+                                </button>
+                                <button
+                                    onClick={() => setEventTab('all')}
+                                    className={`flex-1 py-3 text-center text-sm font-medium transition-colors border-b-2 ${eventTab === 'all' ? 'border-green-600 text-green-600 bg-green-50' : 'border-transparent text-gray-500'}`}>
+                                    全部 <span className="ml-1 text-xs">({allCount})</span>
+                                </button>
+                            </div>
+                        );
+                    })()}
+                    {(() => {
+                        const filtered = hazards.filter(hazard => {
+                            const descriptionMatch = !descriptionFilter || hazard.description && hazard.description.includes(descriptionFilter) || hazard.title && hazard.title.includes(descriptionFilter);
+                            if (eventTab === 'pendingConfirm') return hazard.status === "pendingConfirm" && descriptionMatch;
+                            if (eventTab === 'pending') return (hazard.status === "pending" || hazard.status === "processing" || hazard.status === "refused") && descriptionMatch;
+                            return descriptionMatch;
+                        });
+                        if (filtered.length === 0) return <div className="flex flex-col items-center justify-center p-8 text-gray-500">
+                            <CheckCircle size={48} className="mb-2 text-gray-300" />
+                            <p>暂无事件</p>
+                        </div>;
+                        return filtered.map(hazard => <div
                         key={hazard.id}
                         className="bg-white rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                         onClick={() => handleHazardClick(hazard)}>
@@ -1473,15 +1662,57 @@ const HazardReportingPage: React.FC = () => {
                             <Users size={14} className="mr-1" />
                             <span>整改负责人: {hazard.整改负责人}</span>
                         </div>}
+                        {hazard.status === "cancelled" && hazard.无效原因 && <div className="mb-3 p-3 bg-gray-50 rounded-md border border-gray-200">
+                            <div className="flex items-center text-sm text-gray-500 mb-1">
+                                <X size={14} className="mr-1" />
+                                <span className="font-medium text-red-600">无效原因</span>
+                            </div>
+                            <p className="text-sm text-gray-700">{hazard.无效原因}</p>
+                            {hazard.确认人 && <p className="text-xs text-gray-400 mt-1">{hazard.确认人} · {hazard.确认时间}</p>}
+                        </div>}
+                        {hazard.确认结果 === "有效事件" && <div className="mb-3 p-3 bg-green-50 rounded-md border border-green-200">
+                            <div className="flex items-center text-sm text-green-700 mb-1">
+                                <CheckCircle size={14} className="mr-1" />
+                                <span className="font-medium">{hazard.确认结果}</span>
+                            </div>
+                            {hazard.确认人 && <p className="text-xs text-gray-400 mt-1">{hazard.确认人} · {hazard.确认时间}</p>}
+                        </div>}
                         <div className="flex gap-2">
+                            {hazard.status === "pendingConfirm" && (
+                                <>
+                                    <button
+                                        className="flex-1 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            handleConfirmValid(hazard.id);
+                                        }}>有效事件
+                                    </button>
+                                    <button
+                                        className="flex-1 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            handleConfirmInvalid(hazard.id);
+                                        }}>无效事件
+                                    </button>
+                                </>
+                            )}
                             {hazard.status === "pending" && (
-                                <button
-                                    className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        handleProcess(hazard.id);
-                                    }}>开始整改
-                                                                                                                   </button>
+                                <>
+                                    <button
+                                        className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            handleProcess(hazard.id);
+                                        }}>开始整改
+                                    </button>
+                                    <button
+                                        className="flex-1 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            handleAssignPerson(hazard.id);
+                                        }}>分配人员
+                                    </button>
+                                </>
                             )}
                             {hazard.status === "processing" && <button
                                 className="flex-1 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
@@ -1489,20 +1720,19 @@ const HazardReportingPage: React.FC = () => {
                                     e.stopPropagation();
                                     handleCheck(hazard.id, true);
                                 }}>完成整改
-                                                                                                   </button>}
-                            <button
-                                className="flex-1 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700"
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    handleTransfer(hazard.id);
-                                }}>转交
-                                                                                                   </button>
+                            </button>}
+                            {hazard.status !== "pendingConfirm" && hazard.status !== "cancelled" && (
+                                <button
+                                    className="flex-1 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700"
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        handleTransfer(hazard.id);
+                                    }}>转交
+                                </button>
+                            )}
                         </div>
-                    </div>)}
-                    {hazards.filter(hazard => hazard.status === "pending" || hazard.status === "processing").length === 0 && <div className="flex flex-col items-center justify-center p-8 text-gray-500">
-                        <CheckCircle size={48} className="mb-2 text-gray-300" />
-                        <p>暂无待整改事件</p>
-                    </div>}
+                    </div>);
+                    })()}
                 </div>}
                 {activeTab === "check" && <div className="space-y-4">
                     <div className="bg-white rounded-lg p-4 shadow-sm mb-4">
@@ -2410,6 +2640,18 @@ const HazardReportingPage: React.FC = () => {
                                     <span className="text-sm text-gray-500 mb-1">验收意见:</span>
                                     <span className="text-sm bg-white p-2 rounded">{selectedHazard?.验收意见 || ""}</span>
                                 </div>}
+                                {selectedHazard?.确认结果 && <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">确认结果:</span>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${selectedHazard.确认结果 === "有效事件" ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>{selectedHazard.确认结果}</span>
+                                </div>}
+                                {selectedHazard?.确认人 && <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">确认人:</span>
+                                    <span className="text-sm">{selectedHazard.确认人} · {selectedHazard.确认时间}</span>
+                                </div>}
+                                {selectedHazard?.无效原因 && <div className="flex flex-col">
+                                    <span className="text-sm text-gray-500 mb-1">无效原因:</span>
+                                    <span className="text-sm bg-red-50 p-2 rounded text-red-700 border border-red-100">{selectedHazard.无效原因}</span>
+                                </div>}
                             </div>
                         </div>
                         {selectedHazard && selectedHazard.images && selectedHazard.images.length > 0 && <div>
@@ -2435,6 +2677,55 @@ const HazardReportingPage: React.FC = () => {
                                 </div>)}
                             </div>
                         </div>}
+                    </div>
+                    {/* 当前进度 */}
+                    <div>
+                        <h4 className="text-base font-medium mb-3">当前进度</h4>
+                        <div className="space-y-0">
+                            {(() => {
+                                const status = selectedHazard?.status || "pendingConfirm";
+                                const nodes = [
+                                    { label: "事件提交", person: selectedHazard?.reporter, time: selectedHazard?.reportTime, active: true, completed: true },
+                                    { label: "事件确认", person: selectedHazard?.确认人, time: selectedHazard?.确认时间, active: status === "pendingConfirm", completed: status === "pending" || status === "processing" || status === "completed" || status === "rejected" || status === "refused" || status === "cancelled" },
+                                    { label: "事件整改", person: selectedHazard?.整改负责人 || selectedHazard?.assignedPerson, time: selectedHazard?.completionTime, active: status === "pending" || status === "processing", completed: status === "completed" || status === "rejected" || status === "refused" },
+                                    { label: "事件验收", person: selectedHazard?.验收人, time: selectedHazard?.验收时间 || selectedHazard?.completionTime, active: status === "processing" || status === "rejected", completed: status === "completed" || status === "rejected" },
+                                ];
+                                return nodes.map((node, idx) => {
+                                    const isActive = node.active && !node.completed;
+                                    const isCompleted = node.completed;
+                                    return (
+                                        <div key={idx} className="flex items-start">
+                                            <div className="flex flex-col items-center">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                                                    isCompleted ? 'bg-green-500 text-white' :
+                                                    isActive ? 'bg-blue-500 text-white ring-4 ring-blue-100' :
+                                                    'bg-gray-200 text-gray-400'
+                                                }`}>
+                                                    {isCompleted ? (
+                                                        <CheckCircle size={16} />
+                                                    ) : (
+                                                        <span>{idx + 1}</span>
+                                                    )}
+                                                </div>
+                                                {idx < nodes.length - 1 && (
+                                                    <div className={`w-0.5 h-10 ${isCompleted ? 'bg-green-500' : 'bg-gray-200'}`} />
+                                                )}
+                                            </div>
+                                            <div className="ml-3 pb-8">
+                                                <p className={`text-sm font-medium ${isActive ? 'text-blue-700' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>{node.label}</p>
+                                                {node.person ? (
+                                                    <p className="text-xs text-gray-500 mt-0.5">{node.person}</p>
+                                                ) : (
+                                                    <p className="text-xs text-gray-400 mt-0.5">待处理</p>
+                                                )}
+                                                {node.time && <p className="text-xs text-gray-400">{node.time}</p>}
+                                                {isActive && <span className="inline-block mt-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded">进行中</span>}
+                                            </div>
+                                        </div>
+                                    );
+                                });
+                            })()}
+                        </div>
                     </div>
                     <div className="p-4 border-t border-gray-200">
                         <button
@@ -2583,6 +2874,105 @@ const HazardReportingPage: React.FC = () => {
                                 onClick={confirmTransfer}
                                 className="w-full py-3 bg-yellow-600 text-white font-medium rounded-md">
                                 确认转交
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 整改人员分配弹窗 */}
+            {showAssignModal && selectedHazard && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-lg w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                            <h3 className="text-lg font-medium">分配整改人员</h3>
+                            <button
+                                onClick={() => setShowAssignModal(false)}
+                                className="p-1 text-gray-500 hover:text-gray-700">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                            <div>
+                                <h4 className="text-base font-medium mb-2">事件信息</h4>
+                                <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500">事件标题:</span>
+                                        <span className="text-sm font-medium">{selectedHazard.title || "未命名事件"}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500">当前状态:</span>
+                                        <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusStyle(selectedHazard.status)}`}>{getStatusText(selectedHazard.status)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="text-base font-medium mb-2">整改负责人 <span className="text-red-500">*</span></h4>
+                                <select
+                                    value={selectedAssignee}
+                                    onChange={e => setSelectedAssignee(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                >
+                                    <option value="">请选择整改负责人</option>
+                                    <option value="自己">自己（{currentUser.name}）</option>
+                                    {getAvailableProcessPeople('process').filter(p => p.name !== currentUser.name).map(person => (
+                                        <option key={person.id} value={person.name}>{person.name} ({person.personType})</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="p-4 border-t border-gray-200">
+                            <button
+                                onClick={confirmAssign}
+                                className="w-full py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700">
+                                确认分配
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 无效原因弹窗 */}
+            {showInvalidModal && selectedHazard && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-lg w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                            <h3 className="text-lg font-medium">无效事件原因</h3>
+                            <button
+                                onClick={() => setShowInvalidModal(false)}
+                                className="p-1 text-gray-500 hover:text-gray-700">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                            <div>
+                                <h4 className="text-base font-medium mb-2">事件信息</h4>
+                                <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500">事件标题:</span>
+                                        <span className="text-sm font-medium">{selectedHazard.title || "未命名事件"}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500">当前状态:</span>
+                                        <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusStyle(selectedHazard.status)}`}>{getStatusText(selectedHazard.status)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="text-base font-medium mb-2">无效原因 <span className="text-red-500">*</span></h4>
+                                <textarea
+                                    value={invalidReason}
+                                    onChange={e => setInvalidReason(e.target.value)}
+                                    placeholder="请输入无效原因..."
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent min-h-[100px]"
+                                />
+                            </div>
+                        </div>
+                        <div className="p-4 border-t border-gray-200">
+                            <button
+                                onClick={confirmInvalidWithReason}
+                                className="w-full py-3 bg-gray-500 text-white font-medium rounded-md hover:bg-gray-600">
+                                确认无效
                             </button>
                         </div>
                     </div>

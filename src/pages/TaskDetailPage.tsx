@@ -32,6 +32,16 @@ const TASK_STATUS = [
   { id: 'cancelled', name: '已取消', color: '#6b7280' },
 ];
 
+// 频率显示工具函数
+const getFrequencyDisplay = (type?: string, value?: number): string => {
+  if (!type || type === 'once') return '';
+  const labels: Record<string, string> = {
+    daily: '天', weekly: '周', monthly: '月',
+    quarterly: '季度', semiannual: '半年', annual: '年',
+  };
+  return `每${value || 1}${labels[type] || '天'}${value || 1}次`;
+};
+
 // 执行结果配置
 const EXECUTION_RESULTS = [
   { id: 'passed', name: '合格' },
@@ -79,7 +89,9 @@ const generateMockTasks = (): Task[] => {
       startDate: startDate.toISOString().split('T')[0],
       endDate: dueDate.toISOString().split('T')[0],
       status: randomStatus,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      frequencyType: ['once', 'daily', 'weekly', 'monthly', 'quarterly'][i % 5],
+      frequencyValue: (i % 3) + 1,
     });
   }
   
@@ -353,6 +365,12 @@ const TaskDetailPage: React.FC = () => {
                 <span className="text-sm text-gray-500">任务类型:</span>
                 <span className="text-sm text-blue-500">{getTaskTypeName(selectedTask.taskType)}</span>
               </div>
+              {selectedTask.frequencyType && selectedTask.frequencyType !== 'once' && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">执行频率:</span>
+                  <span className="text-sm text-gray-900">{getFrequencyDisplay(selectedTask.frequencyType, selectedTask.frequencyValue)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">所属团队:</span>
                 <span className="text-sm text-green-500">{getTeamName(selectedTask.team)}</span>

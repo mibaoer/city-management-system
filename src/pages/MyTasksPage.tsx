@@ -32,6 +32,16 @@ const TASK_STATUS = [
   { id: 'cancelled', name: '已取消', color: '#6b7280' },
 ];
 
+// 频率显示工具函数
+const getFrequencyDisplay = (type?: string, value?: number): string => {
+  if (!type || type === 'once') return '';
+  const labels: Record<string, string> = {
+    daily: '天', weekly: '周', monthly: '月',
+    quarterly: '季度', semiannual: '半年', annual: '年',
+  };
+  return `每${value || 1}${labels[type] || '天'}${value || 1}次`;
+};
+
 // 执行结果配置
 const EXECUTION_RESULTS = [
   { id: 'passed', name: '合格' },
@@ -81,6 +91,8 @@ const generateMockTasks = (): Task[] => {
       priority: Math.floor(Math.random() * 3) + 1,
       createdBy: 'admin',
       createdAt: new Date(today.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+      frequencyType: ['once', 'daily', 'weekly', 'monthly'][Math.floor(Math.random() * 4)],
+      frequencyValue: Math.floor(Math.random() * 3) + 1,
     });
   }
   
@@ -497,6 +509,12 @@ const MyTasksPage: React.FC = () => {
                         <span className="text-gray-500 text-xs">任务类型:</span>
                         <span className="text-gray-700 text-xs">{getTaskTypeName(task.taskType)}</span>
                       </div>
+                      {(task as any).frequencyType && (task as any).frequencyType !== 'once' && (
+                        <div className="flex items-center space-x-1">
+                          <span className="text-gray-500 text-xs">执行频率:</span>
+                          <span className="text-gray-700 text-xs">{getFrequencyDisplay((task as any).frequencyType, (task as any).frequencyValue)}</span>
+                        </div>
+                      )}
                       <div className="flex items-center space-x-1">
                         <span className="text-gray-500 text-xs">所属团队:</span>
                         <span className="text-gray-700 text-xs">{getTeamName(task.teamId)}</span>

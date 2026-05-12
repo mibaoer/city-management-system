@@ -42,6 +42,18 @@ const FREQUENCY_UNITS: Record<string, string> = {
   annual: '年',
 };
 
+// 检查记录Mock数据
+const MOCK_INSPECTION_RECORDS: InspectionRecord[] = [
+  { id: 'rec-1', taskId: 'task-1', taskName: '沿街店铺专项整治任务 1', resultType: 'qualified', description: '检查情况良好，各项指标达标', inspector: '张三', checkTime: '2025-10-20 14:30', photos: [], hasIssues: false, taskType: '沿街店铺', team: '城市管理团队', status: 'completed' },
+  { id: 'rec-2', taskId: 'task-3', taskName: '市政设施专项整治任务 3', resultType: 'unqualified', description: '发现多处设施损坏，需限期整改', inspector: '李四', checkTime: '2025-10-19 10:00', photos: [], hasIssues: true, issues: '路灯损坏3处，人行道破损2处', resolved: false, taskType: '市政设施', team: '城市管理团队', status: 'completed' },
+  { id: 'rec-3', taskId: 'task-5', taskName: '工地管理专项整治任务 5', resultType: 'partial', description: '大部分区域符合要求，个别区域需整改', inspector: '王五', checkTime: '2025-10-18 16:00', photos: [], hasIssues: true, issues: '施工围挡不规范', resolved: true, resolvedNote: '已通知整改', taskType: '工地管理', team: '序化管理团队', status: 'completed' },
+  { id: 'rec-4', taskId: 'task-7', taskName: '广告牌专项整治任务 7', resultType: 'qualified', description: '广告牌设置规范，无安全隐患', inspector: '赵六', checkTime: '2025-10-17 09:30', photos: [], hasIssues: false, taskType: '广告牌', team: '城市管理团队', status: 'completed' },
+  { id: 'rec-5', taskId: 'task-9', taskName: '垃圾分类检查任务 9', resultType: 'unqualified', description: '垃圾分类执行情况较差', inspector: '钱七', checkTime: '2025-10-16 11:00', photos: [], hasIssues: true, issues: '多个垃圾桶未分类投放', resolved: false, taskType: '垃圾分类', team: '序化管理团队', status: 'completed' },
+  { id: 'rec-6', taskId: 'task-2', taskName: '市政绿化专项整治任务 2', resultType: 'qualified', description: '绿化养护情况良好', inspector: '孙八', checkTime: '2025-10-15 15:00', photos: [], hasIssues: false, taskType: '市政绿化', team: '城市管理团队', status: 'completed' },
+  { id: 'rec-7', taskId: 'task-4', taskName: '渣土管理专项整治任务 4', resultType: 'partial', description: '渣土清运基本到位，个别点位需加强', inspector: '周九', checkTime: '2025-10-14 08:30', photos: [], hasIssues: true, issues: '3号点位渣土未覆盖', resolved: true, resolvedNote: '已安排覆盖', taskType: '渣土管理', team: '序化管理团队', status: 'completed' },
+  { id: 'rec-8', taskId: 'task-6', taskName: '出店经营专项整治任务 6', resultType: 'qualified', description: '出店经营现象已有效控制', inspector: '吴十', checkTime: '2025-10-13 17:00', photos: [], hasIssues: false, taskType: '出店经营', team: '城市管理团队', status: 'completed' },
+];
+
 // 任务状态
 const TASK_STATUS = [
   { id: 'pending', name: '待处理', color: '#f59e0b' },
@@ -121,6 +133,8 @@ export interface Task {
   endDate: string;
   status: string;
   createdAt: string;
+  frequencyType?: string;   // 'once' | 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'semiannual' | 'annual'
+  frequencyValue?: number;   // 1-30
 }
 
 // 模拟任务数据
@@ -177,6 +191,142 @@ interface TaskListPageProps {
   defaultTeam?: string;
 }
 
+// 检查记录主组件
+const CheckRecordTab: React.FC<{
+  tasks: Task[];
+  records: InspectionRecord[];
+  getStatusLabel: (status: string) => string;
+  getStatusColor: (status: string) => string;
+  getTaskTypeName: (typeId: string) => string;
+  getTaskStatusInfo: (status: string) => { name: string; color: string };
+}> = ({ tasks, records, getStatusLabel, getStatusColor, getTaskTypeName, getTaskStatusInfo }) => {
+  // 筛选条件
+  const [filterForm, setFilterForm] = useState({
+    taskType: '',
+    checkStatus: 'completed',
+    dateFrom: '',
+    dateTo: '',
+    keyword: '',
+  });
+
+  // 获取已完成/已取消的任务作为检查记录
+  const completedTasks = tasks.filter(t => t.status === 'completed' || t.status === 'cancelled');
+
+  const filteredTasks = completedTasks.filter(t => {
+    // 任务类型过滤
+    if (filterForm.taskType && t.taskType !== filterForm.taskType) return false;
+    // 检查状态
+    if (filterForm.checkStatus !== 'all' && t.status !== filterForm.checkStatus) return false;
+    // 检查时间范围
+    if (filterForm.dateFrom && t.startDate < filterForm.dateFrom) return false;
+    if (filterForm.dateTo && t.startDate > filterForm.dateTo) return false;
+    // 关键词搜索
+    if (filterForm.keyword) {
+      const kw = filterForm.keyword.toLowerCase();
+      const matchName = t.taskName.toLowerCase().includes(kw);
+      const matchDesc = t.description.toLowerCase().includes(kw);
+      const matchAssignee = t.assignees.some(a => a.toLowerCase().includes(kw));
+      if (!matchName && !matchDesc && !matchAssignee) return false;
+    }
+    return true;
+  });
+
+  const resetFilters = () => {
+    setFilterForm({ taskType: '', checkStatus: 'all', dateFrom: '', dateTo: '', keyword: '' });
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* 筛选条件 */}
+      <div className="bg-[#0e2a47] rounded-lg border border-[#1e4976] p-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-gray-400 whitespace-nowrap">任务类型:</label>
+            <select value={filterForm.taskType} onChange={e => setFilterForm(f => ({...f, taskType: e.target.value}))} className="px-3 py-2 bg-[#0a1f3a] border border-[#1e4976] rounded text-white text-sm focus:outline-none focus:border-[#00e5ff] w-36">
+              <option value="">全部</option>
+              {TASK_TYPES.map(t => <option key={t.id} value={t.id.toString()}>{t.name}</option>)}
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-gray-400 whitespace-nowrap">检查状态:</label>
+            <select value={filterForm.checkStatus} onChange={e => setFilterForm(f => ({...f, checkStatus: e.target.value}))} className="px-3 py-2 bg-[#0a1f3a] border border-[#1e4976] rounded text-white text-sm focus:outline-none focus:border-[#00e5ff] w-36">
+              <option value="all">全部状态</option>
+              <option value="completed">已完成</option>
+              <option value="cancelled">已取消</option>
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-gray-400 whitespace-nowrap">检查时间:</label>
+            <input type="date" value={filterForm.dateFrom} onChange={e => setFilterForm(f => ({...f, dateFrom: e.target.value}))} className="px-3 py-2 bg-[#0a1f3a] border border-[#1e4976] rounded text-white text-sm focus:outline-none focus:border-[#00e5ff] w-32" />
+            <span className="text-gray-500">-</span>
+            <input type="date" value={filterForm.dateTo} onChange={e => setFilterForm(f => ({...f, dateTo: e.target.value}))} className="px-3 py-2 bg-[#0a1f3a] border border-[#1e4976] rounded text-white text-sm focus:outline-none focus:border-[#00e5ff] w-32" />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 mt-4">
+          <input type="text" value={filterForm.keyword} onChange={e => setFilterForm(f => ({...f, keyword: e.target.value}))} placeholder="请输入任务名称、检查人" className="px-3 py-2 bg-[#0a1f3a] border border-[#1e4976] rounded text-white text-sm focus:outline-none focus:border-[#00e5ff] w-64" />
+          <button className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded transition-colors">查询</button>
+          <button onClick={resetFilters} className="px-4 py-2 border border-gray-600 text-gray-300 text-sm rounded hover:bg-gray-700 transition-colors">重置</button>
+          <div className="flex-1" />
+          <button className="px-4 py-2 border border-[#00e5ff] text-[#00e5ff] text-sm rounded hover:bg-[#00e5ff]/10 transition-colors">统计导出</button>
+          <button className="px-4 py-2 border border-[#00e5ff] text-[#00e5ff] text-sm rounded hover:bg-[#00e5ff]/10 transition-colors">台账导出</button>
+        </div>
+      </div>
+
+      {/* 数据表格 */}
+      <div className="bg-[#0e2a47] rounded-lg border border-[#1e4976] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[#1e4976]">
+                <th className="px-4 py-3 text-left text-gray-400 font-medium w-16">序号</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">任务名称</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">检查时间</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">检查人</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">检查状态</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">检查事件数</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">任务类型</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium">详细地址</th>
+                <th className="px-4 py-3 text-left text-gray-400 font-medium w-20">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTasks.map((task, idx) => {
+                const statusInfo = getTaskStatusInfo(task.status);
+                const record = records.find(r => r.taskId === task.id);
+                return (
+                  <tr key={task.id} className="border-b border-[#1e4976]/50 hover:bg-[#1e4976]/30 transition-colors">
+                    <td className="px-4 py-3 text-gray-400">{idx + 1}</td>
+                    <td className="px-4 py-3 text-[#00e5ff] cursor-pointer hover:underline">{task.taskName}</td>
+                    <td className="px-4 py-3 text-gray-300">{task.startDate} {record?.checkTime?.split(' ')[1] || ''}</td>
+                    <td className="px-4 py-3 text-gray-300">{task.assignees.join(', ')}</td>
+                    <td className="px-4 py-3">
+                      <span className="flex items-center space-x-1">
+                        <span className={`w-2 h-2 rounded-full`} style={{ backgroundColor: statusInfo.color }}></span>
+                        <span className="text-gray-300">{getStatusLabel(task.status)}</span>
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[#00e5ff]">{record?.hasIssues ? '1' : '0'}</td>
+                    <td className="px-4 py-3 text-gray-300">{getTaskTypeName(task.taskType)}</td>
+                    <td className="px-4 py-3 text-gray-400">{task.address || '--'}</td>
+                    <td className="px-4 py-3">
+                      <button className="text-[#00e5ff] hover:underline text-sm">查看</button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filteredTasks.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="text-center py-12 text-gray-500">暂无检查记录</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   const navigate = useNavigate();
   const { getAllPeople, getPersonById, getDepartments } = usePeople();
@@ -196,7 +346,54 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   
   // tab切换状态
   const [activeTab, setActiveTab] = useState<string>(defaultTeam === 'urban' ? 'urban' : defaultTeam === 'sequence' ? 'sequence' : 'all'); // 'all', 'urban', 'sequence'
-  
+  const [pageTab, setPageTab] = useState<'plan' | 'record'>('plan'); // 'plan' 检查计划, 'record' 检查记录
+
+  // 检查记录tab子tab
+  const [recordTab, setRecordTab] = useState<'history' | 'result'>('history');
+
+  // 检查记录类型定义
+  interface InspectionRecord {
+    id: string;
+    taskId: string;
+    taskName: string;
+    resultType: 'qualified' | 'unqualified' | 'partial';
+    description: string;
+    inspector: string;
+    checkTime: string;
+    photos: string[];
+    hasIssues: boolean;
+    issues?: string;
+    resolved?: boolean;
+    resolvedNote?: string;
+    taskType?: string;
+    team?: string;
+    status?: string;
+  }
+
+  // 频率显示工具函数
+  const getFrequencyDisplay = (type?: string, value?: number): string => {
+    if (!type || type === 'once') return '';
+    const labels: Record<string, string> = {
+      daily: '天', weekly: '周', monthly: '月',
+      quarterly: '季度', semiannual: '半年', annual: '年',
+    };
+    return `每${value || 1}${labels[type] || '天'}${value || 1}次`;
+  };
+
+  // 检查结果类型映射
+  const getResultTypeLabel = (type: string): string => {
+    const map: Record<string, string> = { qualified: '合格', unqualified: '不合格', partial: '部分合格' };
+    return map[type] || type;
+  };
+  const getResultTypeColor = (type: string): string => {
+    const map: Record<string, string> = {
+      qualified: 'bg-green-100 text-green-800',
+      unqualified: 'bg-red-100 text-red-800',
+      partial: 'bg-yellow-100 text-yellow-800',
+    };
+    return map[type] || 'bg-gray-100 text-gray-800';
+  };
+
   // 新建任务弹窗状态
   const [showCreateModal, setShowCreateModal] = useState(false);
   
@@ -360,6 +557,16 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   // 获取任务状态信息
   const getTaskStatusInfo = (status: string) => {
     return TASK_STATUS.find(s => s.id === status) || { id: status, name: status, color: '#6b7280' };
+  };
+
+  // 获取状态标签文本
+  const getStatusLabel = (status: string): string => {
+    return getTaskStatusInfo(status).name;
+  };
+
+  // 获取状态颜色
+  const getStatusColor = (status: string): string => {
+    return getTaskStatusInfo(status).color;
   };
   
   // 获取团队名称
@@ -639,7 +846,9 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
         startDate: formData.startDate,
         endDate: formData.endDate,
         status: 'pending',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        frequencyType: formData.frequencyType,
+        frequencyValue: formData.frequencyValue
       };
       
       // 更新任务列表
@@ -663,6 +872,24 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#081c2f] to-[#0d1b2a] text-white p-6 overflow-x-hidden">
+      {/* 页面一级Tab：检查计划/检查记录 */}
+      <div className="flex bg-[#0e2a47] rounded-lg border border-[#1e4976] mb-6 overflow-hidden">
+        <button
+          onClick={() => setPageTab('plan')}
+          className={`flex-1 py-3 text-center font-medium transition-colors ${pageTab === 'plan' ? 'bg-[#00e5ff]/10 text-[#00e5ff] border-b-2 border-[#00e5ff]' : 'text-gray-400 hover:text-gray-200'}`}
+        >
+          检查计划
+        </button>
+        <button
+          onClick={() => setPageTab('record')}
+          className={`flex-1 py-3 text-center font-medium transition-colors ${pageTab === 'record' ? 'bg-[#00e5ff]/10 text-[#00e5ff] border-b-2 border-[#00e5ff]' : 'text-gray-400 hover:text-gray-200'}`}
+        >
+          检查记录
+        </button>
+      </div>
+
+      {pageTab === 'plan' && (
+      <>
       {/* 数据统计区域 */}
       <div className="bg-gradient-to-br from-[#0e2a47] to-[#0a1f3a] rounded-lg border border-[#1e4976] shadow-xl shadow-[#00e5ff]/10 mb-6">
         <div className="p-4 flex justify-between items-center cursor-pointer" onClick={() => setIsStatsExpanded(!isStatsExpanded)}>
@@ -894,7 +1121,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   className="flex items-center bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:bg-gradient-to-r from-[#00d4e5] to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap"
                 >
                   <Plus size={18} className="mr-2" />
-                  新建任务
+                  新建任务计划
                 </button>
               </div>
             </div>
@@ -1025,7 +1252,21 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
           </div>
         </div>
       </div>
-      
+      </>
+      )}
+
+      {/* 检查记录 Tab */}
+      {pageTab === 'record' && (
+        <CheckRecordTab
+          tasks={tasks}
+          records={MOCK_INSPECTION_RECORDS}
+          getStatusLabel={getStatusLabel}
+          getStatusColor={getStatusColor}
+          getTaskTypeName={getTaskTypeName}
+          getTaskStatusInfo={getTaskStatusInfo}
+        />
+      )}
+
       {/* 新建任务弹窗 */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
