@@ -42,6 +42,25 @@ const FREQUENCY_UNITS: Record<string, string> = {
   annual: '年',
 };
 
+// 检查记录类型定义
+interface InspectionRecord {
+  id: string;
+  taskId: string;
+  taskName: string;
+  resultType: 'qualified' | 'unqualified' | 'partial';
+  description: string;
+  inspector: string;
+  checkTime: string;
+  photos: string[];
+  hasIssues: boolean;
+  issues?: string;
+  resolved?: boolean;
+  resolvedNote?: string;
+  taskType?: string;
+  team?: string;
+  status?: string;
+}
+
 // 检查记录Mock数据（匹配已完成/已取消状态的任务）
 const MOCK_INSPECTION_RECORDS: InspectionRecord[] = [
   { id: 'rec-1', taskId: 'task-3', taskName: '沿街店铺专项整治任务 3', resultType: 'qualified', description: '检查情况良好，各项指标达标', inspector: '张三', checkTime: '2025-10-20 14:30', photos: [], hasIssues: false, taskType: '沿街店铺', team: '城市管理团队', status: 'completed' },
@@ -181,6 +200,8 @@ const generateMockTasks = (): Task[] => {
       startDate: startDate.toISOString().split('T')[0],
       endDate: endDate.toISOString().split('T')[0],
       status: TASK_STATUS[statusIndex].id,
+      frequencyType: ['once', 'daily', 'weekly', 'monthly', 'quarterly', 'semiannual', 'annual'][i % 7],
+      frequencyValue: (i % 5) + 1,
       createdAt: new Date().toISOString()
     });
   }
@@ -496,25 +517,6 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   // 检查记录tab子tab
   const [recordTab, setRecordTab] = useState<'history' | 'result'>('history');
 
-  // 检查记录类型定义
-  interface InspectionRecord {
-    id: string;
-    taskId: string;
-    taskName: string;
-    resultType: 'qualified' | 'unqualified' | 'partial';
-    description: string;
-    inspector: string;
-    checkTime: string;
-    photos: string[];
-    hasIssues: boolean;
-    issues?: string;
-    resolved?: boolean;
-    resolvedNote?: string;
-    taskType?: string;
-    team?: string;
-    status?: string;
-  }
-
   // 频率显示工具函数
   const getFrequencyDisplay = (type?: string, value?: number): string => {
     if (!type || type === 'once') return '';
@@ -712,12 +714,11 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
       description: task.description,
       team: task.team,
       assignees: task.assignees,
-      area: task.area,
       address: task.address,
       startDate: task.startDate,
       endDate: task.endDate,
-      frequencyType: 'once',
-      frequencyValue: 1,
+      frequencyType: task.frequencyType || 'once',
+      frequencyValue: task.frequencyValue || 1,
     });
     setShowCreateModal(true);
   };
@@ -770,7 +771,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
   
   // 获取重点区域名称
   const getKeyAreaName = (areaId: string) => {
-    const area = getKeyAreas().find(area => area.id === areaId);
+    const area = getKeyAreas().find((a: { id: string; name: string }) => a.id === areaId);
     return area ? area.name : '未知区域';
   };
   
@@ -811,7 +812,6 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
       description: '',
       team: '',
       assignees: [],
-      area: '',
       address: '',
       startDate: '',
       endDate: '',
@@ -1021,7 +1021,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
         description: formData.description,
         team: formData.team,
         assignees: formData.assignees,
-        area: getKeyAreas().find(area => area.id === formData.keyArea)?.name || '',
+        area: getKeyAreas().find((a: { id: string; name: string }) => a.id === formData.keyArea)?.name || '',
         address: formData.address,
         startDate: formData.startDate,
         endDate: formData.endDate,
@@ -1272,7 +1272,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   className="w-full pl-4 pr-10 py-2 border border-[#1e4976] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff] bg-[#0a1628] text-white appearance-none"
                 >
                   <option value="all">所有重点区域</option>
-                  {getKeyAreas().map((area) => (
+                  {getKeyAreas().map((area: { id: string; name: string }) => (
                     <option key={area.id} value={area.id}>{area.name}</option>
                   ))}
                 </select>
@@ -1559,6 +1559,14 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                     <label className="block text-xs text-gray-400 mb-1">结束日期</label>
                     <p className="text-white">{viewingTask.endDate}</p>
                   </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">频率类型</label>
+                    <p className="text-white">{viewingTask.frequencyType === 'once' || !viewingTask.frequencyType ? '仅一次' : FREQUENCY_TYPES.find(f => f.value === viewingTask.frequencyType)?.label || viewingTask.frequencyType}</p>
+                  </div>
+                  <div className="bg-[#0a1628] p-4 rounded-lg">
+                    <label className="block text-xs text-gray-400 mb-1">频率值</label>
+                    <p className="text-white">{viewingTask.frequencyType === 'once' || !viewingTask.frequencyType ? '--' : `每${viewingTask.frequencyValue || 1}次`}</p>
+                  </div>
                 </div>
               </div>
 
@@ -1761,7 +1769,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                       className={`w-full px-4 py-2 border rounded-lg bg-[#0a1628] text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff] ${errors.keyArea ? 'border-red-500' : 'border-[#1e4976]'}`}
                     >
                       <option value="">请选择重点区域</option>
-                      {getKeyAreas().map(area => (
+                      {getKeyAreas().map((area: { id: string; name: string }) => (
                         <option key={area.id} value={area.id}>{area.name}</option>
                       ))}
                     </select>
