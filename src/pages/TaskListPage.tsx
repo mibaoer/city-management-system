@@ -199,7 +199,10 @@ const CheckRecordTab: React.FC<{
   getStatusColor: (status: string) => string;
   getTaskTypeName: (typeId: string) => string;
   getTaskStatusInfo: (status: string) => { name: string; color: string };
-}> = ({ tasks, records, getStatusLabel, getStatusColor, getTaskTypeName, getTaskStatusInfo }) => {
+  getFunctionCategoryName: (categoryId: string) => string;
+  getKeyAreaName: (keyAreaId: string) => string;
+  getMainRoadName: (roadId: string) => string;
+}> = ({ tasks, records, getStatusLabel, getStatusColor, getTaskTypeName, getTaskStatusInfo, getFunctionCategoryName, getKeyAreaName, getMainRoadName }) => {
   // 筛选条件
   const [filterForm, setFilterForm] = useState({
     taskType: '',
@@ -208,6 +211,24 @@ const CheckRecordTab: React.FC<{
     dateTo: '',
     keyword: '',
   });
+
+  // 查看详情弹窗
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<InspectionRecord | null>(null);
+
+  const handleViewDetail = (task: Task) => {
+    setSelectedTask(task);
+    const record = records.find(r => r.taskId === task.id);
+    setSelectedRecord(record || null);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedTask(null);
+    setSelectedRecord(null);
+  };
 
   // 获取已完成/已取消的任务作为检查记录
   const completedTasks = tasks.filter(t => t.status === 'completed' || t.status === 'cancelled');
@@ -308,7 +329,7 @@ const CheckRecordTab: React.FC<{
                     <td className="px-4 py-3 text-gray-300">{getTaskTypeName(task.taskType)}</td>
                     <td className="px-4 py-3 text-gray-400">{task.address || '--'}</td>
                     <td className="px-4 py-3">
-                      <button className="text-[#00e5ff] hover:underline text-sm">查看</button>
+                      <button onClick={() => handleViewDetail(task)} className="text-[#00e5ff] hover:underline text-sm">查看</button>
                     </td>
                   </tr>
                 );
@@ -322,6 +343,131 @@ const CheckRecordTab: React.FC<{
           </table>
         </div>
       </div>
+
+      {/* 详情弹窗 */}
+      {showDetailModal && selectedTask && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={closeDetailModal}>
+          <div className="bg-[#0e2a47] border border-[#1e4976] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center px-6 py-4 border-b border-[#1e4976]">
+              <h3 className="text-lg font-semibold text-white">任务详情</h3>
+              <button onClick={closeDetailModal} className="text-gray-400 hover:text-white text-xl">&times;</button>
+            </div>
+            <div className="p-6 space-y-6">
+              {/* 任务基础信息 */}
+              <div>
+                <h4 className="text-sm font-medium text-[#00e5ff] mb-3">任务基础信息</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">任务名称</p>
+                    <p className="text-white">{selectedTask.taskName}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">任务类型</p>
+                    <p className="text-white">{getTaskTypeName(selectedTask.taskType)}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">职能分类</p>
+                    <p className="text-white">{getFunctionCategoryName(selectedTask.functionCategory)}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">重点区域</p>
+                    <p className="text-white">{getKeyAreaName(selectedTask.keyArea)}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">主要道路</p>
+                    <p className="text-white">{getMainRoadName(selectedTask.mainRoad)}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">详细地址</p>
+                    <p className="text-white">{selectedTask.address || '--'}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">执行人员</p>
+                    <p className="text-white">{selectedTask.assignees.join(', ')}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">任务状态</p>
+                    <p className="text-white">{getStatusLabel(selectedTask.status)}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">开始日期</p>
+                    <p className="text-white">{selectedTask.startDate}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded">
+                    <p className="text-xs text-gray-400 mb-1">结束日期</p>
+                    <p className="text-white">{selectedTask.endDate}</p>
+                  </div>
+                  <div className="bg-[#0a1f3a] p-3 rounded col-span-2">
+                    <p className="text-xs text-gray-400 mb-1">任务描述</p>
+                    <p className="text-white">{selectedTask.description}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 检查结果 */}
+              {selectedRecord && (
+                <div>
+                  <h4 className="text-sm font-medium text-[#00e5ff] mb-3">检查结果</h4>
+                  <div className="bg-[#0a1f3a] p-4 rounded">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">检查人员</p>
+                        <p className="text-white">{selectedRecord.inspector || '--'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">检查时间</p>
+                        <p className="text-white">{selectedRecord.checkTime || '--'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">检查结果</p>
+                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${selectedRecord.resultType === 'qualified' ? 'bg-green-100 text-green-800' : selectedRecord.resultType === 'unqualified' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {selectedRecord.resultType === 'qualified' ? '合格' : selectedRecord.resultType === 'unqualified' ? '不合格' : '部分合格'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">是否有问题</p>
+                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${selectedRecord.hasIssues ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                          {selectedRecord.hasIssues ? '有问题' : '无问题'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-400 mb-1">检查描述</p>
+                      <p className="text-white">{selectedRecord.description || '--'}</p>
+                    </div>
+                    {selectedRecord.issues && (
+                      <div className="mb-4">
+                        <p className="text-xs text-gray-400 mb-1">问题详情</p>
+                        <p className="text-red-400">{selectedRecord.issues}</p>
+                      </div>
+                    )}
+                    {selectedRecord.resolved !== undefined && (
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">问题处理状态</p>
+                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${selectedRecord.resolved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {selectedRecord.resolved ? '已处理' : '待处理'}
+                        </span>
+                        {selectedRecord.resolvedNote && (
+                          <p className="text-sm text-gray-300 mt-2">处理备注: {selectedRecord.resolvedNote}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {!selectedRecord && (
+                <div className="bg-[#0a1f3a] p-4 rounded text-center text-gray-400">
+                  暂无检查结果记录
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end px-6 py-4 border-t border-[#1e4976]">
+              <button onClick={closeDetailModal} className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition-colors">关闭</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1263,6 +1409,9 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
           getStatusColor={getStatusColor}
           getTaskTypeName={getTaskTypeName}
           getTaskStatusInfo={getTaskStatusInfo}
+          getFunctionCategoryName={getFunctionCategoryName}
+          getKeyAreaName={getKeyAreaName}
+          getMainRoadName={getMainRoadName}
         />
       )}
 
