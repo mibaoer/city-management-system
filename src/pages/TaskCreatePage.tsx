@@ -541,11 +541,14 @@ export default function TaskCreatePage() {
             </div>
 
             {/* 频率次数设置 */}
-            {formData.frequencyType !== 'once' && formData.frequencyType !== 'daily' && (
+            {formData.frequencyType !== 'once' && (
               <div className="flex items-center gap-4">
                 <label className="block text-sm font-medium text-gray-700">
-                  每
-                  <span className="text-gray-500 mx-1">{FREQUENCY_UNITS[formData.frequencyType]}</span>
+                  {formData.frequencyType === 'daily' ? (
+                    <>每<span className="text-blue-600 mx-1">日</span></>
+                  ) : (
+                    <>每<span className="text-blue-600 mx-1">{FREQUENCY_UNITS[formData.frequencyType]}</span></>
+                  )}
                 </label>
                 <div className="flex items-center gap-2">
                   <button
@@ -571,10 +574,12 @@ export default function TaskCreatePage() {
                   </button>
                 </div>
                 <label className="block text-sm font-medium text-gray-700">
-                  <span className="text-gray-500">次</span>
+                  <span className="text-blue-600">次</span>
                 </label>
                 <span className="text-sm text-gray-500">
-                  即每{FREQUENCY_UNITS[formData.frequencyType]}执行 {formData.frequencyValue} 次
+                  {formData.frequencyType === 'daily'
+                    ? `即每日执行 ${formData.frequencyValue} 次`
+                    : `即每${FREQUENCY_UNITS[formData.frequencyType]}执行 ${formData.frequencyValue} 次`}
                 </span>
               </div>
             )}
@@ -585,7 +590,7 @@ export default function TaskCreatePage() {
                 <Calendar size={14} className="inline mr-1" />
                 频率设置：{
                   formData.frequencyType === 'once' ? '仅执行一次' :
-                  formData.frequencyType === 'daily' ? '每日执行' :
+                  formData.frequencyType === 'daily' ? `每日执行 ${formData.frequencyValue} 次` :
                   `每${formData.frequencyValue}${FREQUENCY_UNITS[formData.frequencyType]}执行一次`
                 }
               </p>

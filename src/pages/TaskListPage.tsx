@@ -1317,11 +1317,14 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 </div>
 
                 {/* 频率次数设置 */}
-                {formData.frequencyType !== 'once' && formData.frequencyType !== 'daily' && (
+                {formData.frequencyType !== 'once' && (
                   <div className="flex items-center gap-4 mb-4">
                     <label className="block text-sm font-medium text-gray-300">
-                      每
-                      <span className="text-[#00e5ff] mx-1">{FREQUENCY_UNITS[formData.frequencyType]}</span>
+                      {formData.frequencyType === 'daily' ? (
+                        <>每<span className="text-[#00e5ff] mx-1">日</span></>
+                      ) : (
+                        <>每<span className="text-[#00e5ff] mx-1">{FREQUENCY_UNITS[formData.frequencyType]}</span></>
+                      )}
                     </label>
                     <div className="flex items-center gap-2">
                       <button
@@ -1350,7 +1353,9 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                       <span className="text-[#00e5ff]">次</span>
                     </label>
                     <span className="text-sm text-gray-400">
-                      即每{FREQUENCY_UNITS[formData.frequencyType]}执行 {formData.frequencyValue} 次
+                      {formData.frequencyType === 'daily'
+                        ? `即每日执行 ${formData.frequencyValue} 次`
+                        : `即每${FREQUENCY_UNITS[formData.frequencyType]}执行 ${formData.frequencyValue} 次`}
                     </span>
                   </div>
                 )}
@@ -1360,7 +1365,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   <p className="text-sm text-gray-300">
                     <strong className="text-[#00e5ff]">频率设置：</strong>{' '}
                     {formData.frequencyType === 'once' ? '仅执行一次' :
-                     formData.frequencyType === 'daily' ? '每日执行' :
+                     formData.frequencyType === 'daily' ? `每日执行 ${formData.frequencyValue} 次` :
                      `每${formData.frequencyValue}${FREQUENCY_UNITS[formData.frequencyType]}执行一次`}
                   </p>
                 </div>
