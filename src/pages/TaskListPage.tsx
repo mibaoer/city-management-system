@@ -1315,8 +1315,8 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
           <table className="w-full">
             <thead>
               <tr className="bg-[#1e4976]">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">任务名称</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">任务类型</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">计划名称</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">计划类型</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">职能分类</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">重点区域</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">主要道路</th>
@@ -1334,11 +1334,10 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 filteredTasks.map((task) => (
                   <tr 
                     key={task.id} 
-                    className="hover:bg-[#1e4976]/50 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/task/${task.id}`)}
+                    className="hover:bg-[#1e4976]/30 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-white hover:text-[#00e5ff] transition-colors">
+                      <div className="font-medium text-white">
                         {task.taskName}
                       </div>
                       <div className="text-sm text-gray-400 truncate max-w-xs">{task.description}</div>
