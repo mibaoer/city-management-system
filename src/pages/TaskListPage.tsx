@@ -441,8 +441,8 @@ const CheckRecordTab: React.FC<{
                       </div>
                       <div>
                         <p className="text-xs text-gray-400 mb-1">检查结果</p>
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${selectedRecord.resultType === 'qualified' ? 'bg-green-100 text-green-800' : selectedRecord.resultType === 'unqualified' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                          {selectedRecord.resultType === 'qualified' ? '合格' : selectedRecord.resultType === 'unqualified' ? '不合格' : '部分合格'}
+                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${selectedRecord.resultType === 'qualified' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                          {selectedRecord.resultType === 'qualified' ? '合格' : '不合格'}
                         </span>
                       </div>
                       <div>
@@ -529,7 +529,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
 
   // 检查结果类型映射
   const getResultTypeLabel = (type: string): string => {
-    const map: Record<string, string> = { qualified: '合格', unqualified: '不合格', partial: '部分合格' };
+    const map: Record<string, string> = { qualified: '合格', unqualified: '不合格' };
     return map[type] || type;
   };
   const getResultTypeColor = (type: string): string => {

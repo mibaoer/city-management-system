@@ -46,7 +46,6 @@ const getFrequencyDisplay = (type?: string, value?: number): string => {
 const EXECUTION_RESULTS = [
   { id: 'passed', name: '合格' },
   { id: 'failed', name: '不合格' },
-  { id: 'partial', name: '部分合格' },
 ];
 
 // 任务执行结果接口
@@ -659,8 +658,8 @@ const MyTasksPage: React.FC = () => {
                   />
                 </div>
                 
-                {/* 问题详情（仅在不合格或部分合格时显示） */}
-                {(currentExecutionResult.resultType === 'failed' || currentExecutionResult.resultType === 'partial') && (
+                {/* 问题详情（仅在不合格时显示） */}
+                {currentExecutionResult.resultType === 'failed' && (
                   <div>
                     <label htmlFor="issueDetails" className="block text-sm font-medium text-gray-700 mb-2">问题详情</label>
                     <textarea
@@ -674,8 +673,8 @@ const MyTasksPage: React.FC = () => {
                   </div>
                 )}
                 
-                {/* 已现场解决（仅在不合格或部分合格时显示） */}
-                {(currentExecutionResult.resultType === 'failed' || currentExecutionResult.resultType === 'partial') && (
+                {/* 已现场解决（仅在不合格时显示） */}
+                {currentExecutionResult.resultType === 'failed' && (
                   <div className="flex items-center">
                     <input
                       type="checkbox"
