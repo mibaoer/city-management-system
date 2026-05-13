@@ -690,7 +690,7 @@ const MyTasksPage: React.FC = () => {
                 )}
                 
                 {/* 解决说明（仅在标记为已解决时显示） */}
-                {((currentExecutionResult.resultType === 'failed' || currentExecutionResult.resultType === 'partial') && 
+                {(currentExecutionResult.resultType === 'failed' && 
                   currentExecutionResult.resolved) && (
                   <div>
                     <label htmlFor="resolvedNote" className="block text-sm font-medium text-gray-700 mb-2">解决说明</label>

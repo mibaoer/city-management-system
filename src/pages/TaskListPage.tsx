@@ -47,7 +47,7 @@ interface InspectionRecord {
   id: string;
   taskId: string;
   taskName: string;
-  resultType: 'qualified' | 'unqualified' | 'partial';
+  resultType: 'qualified' | 'unqualified';
   description: string;
   inspector: string;
   checkTime: string;
@@ -65,11 +65,11 @@ interface InspectionRecord {
 const MOCK_INSPECTION_RECORDS: InspectionRecord[] = [
   { id: 'rec-1', taskId: 'task-3', taskName: '沿街店铺专项整治任务 3', resultType: 'qualified', description: '检查情况良好，各项指标达标', inspector: '张三', checkTime: '2025-10-20 14:30', photos: [], hasIssues: false, taskType: '沿街店铺', team: '城市管理团队', status: 'completed' },
   { id: 'rec-2', taskId: 'task-4', taskName: '市政设施专项整治任务 4', resultType: 'unqualified', description: '发现多处设施损坏，需限期整改', inspector: '李四', checkTime: '2025-10-19 10:00', photos: [], hasIssues: true, issues: '路灯损坏3处，人行道破损2处', resolved: false, taskType: '市政设施', team: '城市管理团队', status: 'completed' },
-  { id: 'rec-3', taskId: 'task-7', taskName: '工地管理专项整治任务 7', resultType: 'partial', description: '大部分区域符合要求，个别区域需整改', inspector: '王五', checkTime: '2025-10-18 16:00', photos: [], hasIssues: true, issues: '施工围挡不规范', resolved: true, resolvedNote: '已通知整改', taskType: '工地管理', team: '序化管理团队', status: 'completed' },
+  { id: 'rec-3', taskId: 'task-7', taskName: '工地管理专项整治任务 7', resultType: 'unqualified', description: '大部分区域符合要求，个别区域需整改', inspector: '王五', checkTime: '2025-10-18 16:00', photos: [], hasIssues: true, issues: '施工围挡不规范', resolved: true, resolvedNote: '已通知整改', taskType: '工地管理', team: '序化管理团队', status: 'completed' },
   { id: 'rec-4', taskId: 'task-8', taskName: '广告牌专项整治任务 8', resultType: 'qualified', description: '广告牌设置规范，无安全隐患', inspector: '赵六', checkTime: '2025-10-17 09:30', photos: [], hasIssues: false, taskType: '广告牌', team: '城市管理团队', status: 'completed' },
   { id: 'rec-5', taskId: 'task-11', taskName: '垃圾分类检查任务 11', resultType: 'unqualified', description: '垃圾分类执行情况较差', inspector: '钱七', checkTime: '2025-10-16 11:00', photos: [], hasIssues: true, issues: '多个垃圾桶未分类投放', resolved: false, taskType: '垃圾分类', team: '序化管理团队', status: 'completed' },
   { id: 'rec-6', taskId: 'task-12', taskName: '市政绿化专项整治任务 12', resultType: 'qualified', description: '绿化养护情况良好', inspector: '孙八', checkTime: '2025-10-15 15:00', photos: [], hasIssues: false, taskType: '市政绿化', team: '城市管理团队', status: 'completed' },
-  { id: 'rec-7', taskId: 'task-15', taskName: '渣土管理专项整治任务 15', resultType: 'partial', description: '渣土清运基本到位，个别点位需加强', inspector: '周九', checkTime: '2025-10-14 08:30', photos: [], hasIssues: true, issues: '3号点位渣土未覆盖', resolved: true, resolvedNote: '已安排覆盖', taskType: '渣土管理', team: '序化管理团队', status: 'completed' },
+  { id: 'rec-7', taskId: 'task-15', taskName: '渣土管理专项整治任务 15', resultType: 'unqualified', description: '渣土清运基本到位，个别点位需加强', inspector: '周九', checkTime: '2025-10-14 08:30', photos: [], hasIssues: true, issues: '3号点位渣土未覆盖', resolved: true, resolvedNote: '已安排覆盖', taskType: '渣土管理', team: '序化管理团队', status: 'completed' },
   { id: 'rec-8', taskId: 'task-16', taskName: '出店经营专项整治任务 16', resultType: 'qualified', description: '出店经营现象已有效控制', inspector: '吴十', checkTime: '2025-10-13 17:00', photos: [], hasIssues: false, taskType: '出店经营', team: '城市管理团队', status: 'completed' },
 ];
 
@@ -536,7 +536,6 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
     const map: Record<string, string> = {
       qualified: 'bg-green-100 text-green-800',
       unqualified: 'bg-red-100 text-red-800',
-      partial: 'bg-yellow-100 text-yellow-800',
     };
     return map[type] || 'bg-gray-100 text-gray-800';
   };
