@@ -722,7 +722,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
     });
     setShowCreateModal(true);
   };
-  
+
   // 获取人员姓名
   const getPersonName = (personId: string) => {
     const person = getPersonById(personId);
@@ -1326,7 +1326,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">开始日期</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">结束日期</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">状态</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">操作</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider sticky right-0 bg-[#1e4976] z-10">操作</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1e4976]">
@@ -1392,7 +1392,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                         {getTaskStatusInfo(task.status).name}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 bg-[#0a1f3a] z-10">
                       <button 
                         className="text-[#00e5ff] hover:text-[#00ffb2] transition-colors mr-3"
                         onClick={(e) => { e.stopPropagation(); handleViewTask(task); }}
