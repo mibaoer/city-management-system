@@ -1598,8 +1598,8 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
             {/* 弹窗头部 */}
             <div className="flex items-center justify-between p-6 border-b border-[#1e4976]">
               <div>
-                <h3 className="text-xl font-semibold bg-gradient-to-r from-[#00e5ff] via-white to-[#00ffb2] bg-clip-text text-transparent">创建日常检查任务</h3>
-                <p className="text-sm text-gray-300 mt-1">填写日常检查任务信息并关联职能分类</p>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-[#00e5ff] via-white to-[#00ffb2] bg-clip-text text-transparent">创建日常检查计划</h3>
+                <p className="text-sm text-gray-300 mt-1">填写日常检查计划信息并关联职能分类</p>
               </div>
               <button
                 onClick={closeCreateModal}
@@ -1622,14 +1622,14 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                   {/* 任务名称 */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      任务名称 <span className="text-red-400">*</span>
+                      计划名称 <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
                       name="taskName"
                       value={formData.taskName}
                       onChange={handleChange}
-                      placeholder="请输入任务名称"
+                      placeholder="请输入计划名称"
                       className={`w-full px-4 py-2 border rounded-lg bg-[#0a1628] text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff] ${errors.taskName ? 'border-red-500' : 'border-[#1e4976]'}`}
                     />
                     {errors.taskName && (
@@ -1637,17 +1637,17 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                     )}
                   </div>
                   
-                  {/* 任务描述 */}
+                  {/* 计划描述 */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      任务描述
+                      计划描述
                     </label>
                     <textarea
                       name="description"
                       value={formData.description}
                       onChange={handleChange}
                       rows={4}
-                      placeholder="请详细描述任务内容、要求和注意事项..."
+                      placeholder="请详细描述计划内容、要求和注意事项..."
                       className="w-full px-4 py-2 border border-[#1e4976] rounded-lg bg-[#0a1628] text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff]"
                     />
                   </div>
@@ -2023,7 +2023,7 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
               ) : (
                 <div className="flex items-center">
                   <Save size={16} className="mr-2" />
-                  创建日常检查任务
+                  创建日常检查计划
                 </div>
               )}
             </button>
