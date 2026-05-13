@@ -1394,13 +1394,13 @@ const TaskListPage: React.FC<TaskListPageProps> = ({ defaultTeam = 'all' }) => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 bg-[#0a1f3a] z-10">
                       <button 
-                        className="text-[#00e5ff] hover:text-[#00ffb2] transition-colors mr-3"
+                        className="bg-gradient-to-r from-[#00e5ff] to-[#00ffb2] hover:from-[#00d4e5] hover:to-[#00e6a5] text-[#0e2a47] hover:shadow-lg hover:shadow-[#00e5ff]/30 px-3 py-1.5 rounded-lg font-medium transition-all mr-2"
                         onClick={(e) => { e.stopPropagation(); handleViewTask(task); }}
                       >
                         查看
                       </button>
                       <button 
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="border border-[#00e5ff] text-[#00e5ff] hover:bg-[#00e5ff]/10 hover:border-[#00ffb2] hover:text-[#00ffb2] px-3 py-1.5 rounded-lg font-medium transition-all"
                         onClick={(e) => { e.stopPropagation(); handleEditTask(task); }}
                       >
                         编辑
