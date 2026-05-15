@@ -93,7 +93,7 @@ const PhotoReportListPage: React.FC = () => {
           status: "completed",
           reportTime: "2025-10-20 10:30",
           reporter: "张三",
-          hazardLevel: "一般事件",
+          hazardLevel: "一般",
           rectificationMethod: "限期整改",
           rectificationDeadline: "2025-10-25",
           assignedPerson: "李四",
