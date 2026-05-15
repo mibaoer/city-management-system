@@ -229,12 +229,13 @@ const PhotoReportListPage: React.FC = () => {
     }
   };
 
-  // 获取隐患等级样式
+  // 获取事件等级样式
   const getHazardLevelStyle = (level: string) => {
     switch (level) {
-      case '重大隐患': return 'bg-red-100 text-red-800';
-      case '一般隐患': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case '特急': return 'bg-red-100 text-red-800';
+      case '急': return 'bg-orange-100 text-orange-800';
+      case '一般': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
