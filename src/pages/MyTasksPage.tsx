@@ -754,6 +754,32 @@ const MyTasksPage: React.FC = () => {
                 {/* 事件检查表单（仅在不合格时显示） */}
                 {currentExecutionResult.resultType === 'failed' && (
                   <div className="space-y-4">
+                    {/* 事件照片 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">*事件照片</label>
+                      <div className="flex flex-wrap gap-2">
+                        {currentExecutionResult.eventPhotos?.map((photo, index) => (
+                          <div key={index} className="relative w-24 h-24">
+                            <img src={photo} alt={`事件照片${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                            <button 
+                              onClick={() => handleExecutionResultChange('eventPhotos', (currentExecutionResult.eventPhotos || []).filter((_, i) => i !== index))}
+                              className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                        <button 
+                          type="button"
+                          onClick={() => setShowPhotoUpload(true)}
+                          className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-400 transition-colors"
+                        >
+                          <Camera size={24} className="text-gray-400 mb-1" />
+                          <span className="text-xs text-gray-500">添加图片</span>
+                        </button>
+                      </div>
+                    </div>
+                    
                     {/* 事件位置 */}
                     <div>
                       <label htmlFor="eventLocation" className="block text-sm font-medium text-gray-700 mb-2">*事件位置</label>
@@ -780,11 +806,11 @@ const MyTasksPage: React.FC = () => {
                       />
                     </div>
                     
-                    {/* 确定事件等级 */}
+                    {/* 事件等级 */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">确定事件等级</label>
-                      <div className="space-y-2">
-                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label className="block text-sm font-medium text-gray-700 mb-3">*事件等级</label>
+                      <div className="space-y-3">
+                        <label className="flex items-center cursor-pointer">
                           <input
                             type="radio"
                             name="eventLevel"
@@ -793,15 +819,10 @@ const MyTasksPage: React.FC = () => {
                             onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                             className="w-4 h-4 text-red-600 focus:ring-red-500 border-gray-300"
                           />
-                          <div className="ml-3">
-                            <div className="flex items-center">
-                              <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-                              <span className="text-sm font-medium text-gray-700">特急</span>
-                            </div>
-                            <p className="text-xs text-gray-500">需要立即处理的紧急事件</p>
-                          </div>
+                          <span className="w-3 h-3 rounded-full bg-red-500 mr-3"></span>
+                          <span className="text-sm font-medium text-gray-700">特急</span>
                         </label>
-                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <label className="flex items-center cursor-pointer">
                           <input
                             type="radio"
                             name="eventLevel"
@@ -810,15 +831,10 @@ const MyTasksPage: React.FC = () => {
                             onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                             className="w-4 h-4 text-orange-500 focus:ring-orange-500 border-gray-300"
                           />
-                          <div className="ml-3">
-                            <div className="flex items-center">
-                              <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
-                              <span className="text-sm font-medium text-gray-700">急</span>
-                            </div>
-                            <p className="text-xs text-gray-500">需要尽快处理的事件</p>
-                          </div>
+                          <span className="w-3 h-3 rounded-full bg-orange-500 mr-3"></span>
+                          <span className="text-sm font-medium text-gray-700">急</span>
                         </label>
-                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <label className="flex items-center cursor-pointer">
                           <input
                             type="radio"
                             name="eventLevel"
@@ -827,13 +843,8 @@ const MyTasksPage: React.FC = () => {
                             onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                             className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                           />
-                          <div className="ml-3">
-                            <div className="flex items-center">
-                              <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-                              <span className="text-sm font-medium text-gray-700">一般</span>
-                            </div>
-                            <p className="text-xs text-gray-500">常规事件，按计划处理</p>
-                          </div>
+                          <span className="w-3 h-3 rounded-full bg-blue-500 mr-3"></span>
+                          <span className="text-sm font-medium text-gray-700">一般</span>
                         </label>
                       </div>
                     </div>
@@ -841,18 +852,37 @@ const MyTasksPage: React.FC = () => {
                     {/* 事件类型 */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">*事件类型</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {EVENT_TYPES.map(type => (
-                          <button
-                            key={type.id}
-                            type="button"
-                            className={`py-2 px-3 text-xs rounded-lg border transition-colors ${currentExecutionResult.eventType === type.id ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 hover:border-gray-400'}`}
-                            onClick={() => handleExecutionResultChange('eventType', type.id)}
-                          >
-                            {type.name}
-                          </button>
-                        ))}
+                      <div className="relative">
+                        <select
+                          value={currentExecutionResult.eventType || ''}
+                          onChange={(e) => handleExecutionResultChange('eventType', e.target.value)}
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm appearance-none bg-white"
+                        >
+                          <option value="">请选择</option>
+                          {EVENT_TYPES.map(type => (
+                            <option key={type.id} value={type.id}>{type.name}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                       </div>
+                    </div>
+                    
+                    {/* 整改类型 */}
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${currentExecutionResult.rectificationType === 'delayed' ? 'bg-gray-100 text-gray-700 border border-gray-300' : 'bg-white text-gray-500 border border-gray-200'}`}
+                        onClick={() => handleExecutionResultChange('rectificationType', 'delayed')}
+                      >
+                        限期整改
+                      </button>
+                      <button
+                        type="button"
+                        className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${currentExecutionResult.rectificationType === 'immediate' ? 'bg-blue-500 text-white' : 'bg-white text-gray-500 border border-gray-200'}`}
+                        onClick={() => handleExecutionResultChange('rectificationType', 'immediate')}
+                      >
+                        立即整改
+                      </button>
                     </div>
                     
                     {/* 整改时限（仅在限期整改时显示） */}
@@ -888,136 +918,134 @@ const MyTasksPage: React.FC = () => {
                       </div>
                     )}
                     
-                    {/* 指派处理人 */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">*指派处理人</label>
-                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                        <span className={currentExecutionResult.assignee ? 'text-gray-700' : 'text-gray-500'}>
-                          {currentExecutionResult.assignee || '请选择人员'}
-                        </span>
-                        <button 
-                          type="button" 
-                          className="text-blue-500 text-sm flex items-center"
-                          onClick={() => openPersonSelector('assignee')}
-                        >
-                          <UserPlus size={16} className="mr-1" />
-                          添加人员
-                        </button>
-                      </div>
-                    </div>
-                    
                     {/* 整改图片 */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">*整改图片</label>
-                      <div className="grid grid-cols-4 gap-2">
-                        <div className="aspect-square border border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400">
-                          <ImagePlus size={24} />
-                          <span className="text-xs mt-1">添加图片</span>
-                        </div>
+                      <div className="flex flex-wrap gap-2">
+                        {currentExecutionResult.rectificationPhotos?.map((photo, index) => (
+                          <div key={index} className="relative w-24 h-24">
+                            <img src={photo} alt={`整改照片${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                            <button 
+                              onClick={() => handleExecutionResultChange('rectificationPhotos', (currentExecutionResult.rectificationPhotos || []).filter((_, i) => i !== index))}
+                              className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                        <button 
+                          type="button"
+                          onClick={() => setShowPhotoUpload(true)}
+                          className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-400 transition-colors"
+                        >
+                          <Camera size={24} className="text-gray-400 mb-1" />
+                          <span className="text-xs text-gray-500">添加图片</span>
+                        </button>
                       </div>
                     </div>
                     
                     {/* 整改描述 */}
                     <div>
-                      <label htmlFor="rectificationDescription" className="block text-sm font-medium text-gray-700 mb-2">*整改描述</label>
+                      <label htmlFor="rectificationDesc" className="block text-sm font-medium text-gray-700 mb-2">*整改描述</label>
                       <textarea
-                        id="rectificationDescription"
+                        id="rectificationDesc"
                         value={currentExecutionResult.rectificationDescription || ''}
                         onChange={(e) => handleExecutionResultChange('rectificationDescription', e.target.value)}
                         rows={3}
-                        placeholder="请输入整改措施和处理结果(最多200字)"
+                        placeholder="请输入"
                         className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
                       />
                     </div>
                     
-                    {/* 整改人 */}
+                    {/* 整改人（支持多选） */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">整改人</label>
-                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                        <span className={currentExecutionResult.rectifier ? 'text-gray-700' : 'text-gray-500'}>
-                          {currentExecutionResult.rectifier || '请选择人员'}
-                        </span>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">*整改人</label>
+                      <div className="flex flex-wrap gap-2">
+                        {currentExecutionResult.rectifiers?.map((person, index) => (
+                          <span key={index} className="inline-flex items-center px-3 py-1.5 bg-gray-100 rounded-full text-sm text-gray-700">
+                            {person}
+                            <button 
+                              onClick={() => handleExecutionResultChange('rectifiers', (currentExecutionResult.rectifiers || []).filter((_, i) => i !== index))}
+                              className="ml-1 text-gray-500 hover:text-red-500"
+                            >
+                              X
+                            </button>
+                          </span>
+                        ))}
                         <button 
                           type="button" 
-                          className="text-blue-500 text-sm flex items-center"
-                          onClick={() => openPersonSelector('rectifier')}
+                          className="px-3 py-1.5 border border-blue-500 text-blue-500 rounded-full text-sm flex items-center hover:bg-blue-50"
+                          onClick={() => openPersonSelector('rectifiers')}
                         >
-                          <UserPlus size={16} className="mr-1" />
+                          <UserPlus size={14} className="mr-1" />
                           添加人员
                         </button>
                       </div>
                     </div>
                     
-                    {/* 签名 */}
+                    {/* 整改人签名 */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">签名</label>
-                      <div className="h-24 border border-gray-300 rounded-lg flex flex-col items-center justify-center">
-                        <Signature size={32} className="text-gray-300" />
-                        <span className="text-xs text-gray-400 mt-2">立即签字</span>
-                      </div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">整改人签名</label>
+                      <button 
+                        type="button"
+                        className="w-full py-3 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                      >
+                        整改人签名
+                      </button>
                     </div>
                     
                     {/* 验收人 */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">验收人</label>
-                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                        <span className={currentExecutionResult.reviewer ? 'text-gray-700' : 'text-gray-500'}>
-                          {currentExecutionResult.reviewer || '请选择人员'}
-                        </span>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">*验收人</label>
+                      <div className="flex flex-wrap gap-2">
+                        {currentExecutionResult.reviewers?.map((person, index) => (
+                          <span key={index} className="inline-flex items-center px-3 py-1.5 bg-gray-100 rounded-full text-sm text-gray-700">
+                            {person}
+                            <button 
+                              onClick={() => handleExecutionResultChange('reviewers', (currentExecutionResult.reviewers || []).filter((_, i) => i !== index))}
+                              className="ml-1 text-gray-500 hover:text-red-500"
+                            >
+                              X
+                            </button>
+                          </span>
+                        ))}
                         <button 
                           type="button" 
-                          className="text-blue-500 text-sm"
-                          onClick={() => openPersonSelector('reviewer')}
+                          className="px-3 py-1.5 border border-blue-500 text-blue-500 rounded-full text-sm flex items-center hover:bg-blue-50"
+                          onClick={() => openPersonSelector('reviewers')}
                         >
-                          选择
+                          <UserPlus size={14} className="mr-1" />
+                          添加人员
                         </button>
                       </div>
                     </div>
-                  </div>
-                )}
-                
-                {/* 已上传照片展示 */}
-                {uploadedPhotos.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-3">已上传照片 ({uploadedPhotos.length})</h4>
-                    <div className="grid grid-cols-3 gap-2">
-                      {uploadedPhotos.map((photo, index) => (
-                        <div key={index} className="relative">
-                          <img src={photo} alt={`检查照片 ${index + 1}`} className="w-full h-24 object-cover rounded" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mt-6 px-4 pb-4">
-                <div className="flex space-x-3">
-                  <button 
-                    onClick={() => setShowExecutionResult(false)}
-                    className="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
+                    
+                    {/* 提交按钮 */}
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="button"
+                    className="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 text-sm font-medium"
+                    onClick={() => {
+                      // 暂存逻辑
+                      alert('已暂存');
+                    }}
                   >
-                    取消
+                    暂存
                   </button>
-                  <button 
-                    onClick={submitExecutionResult}
-                    disabled={
-                      (currentExecutionResult.resultType === 'failed' && (!currentExecutionResult.eventLocation || !currentExecutionResult.eventDescription || !currentExecutionResult.eventType)) || 
-                      loading
-                    }
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium ${(currentExecutionResult.resultType === 'failed' && (!currentExecutionResult.eventLocation || !currentExecutionResult.eventDescription || !currentExecutionResult.eventType)) || loading ? 
-                      'bg-gray-300 cursor-not-allowed text-gray-500' : 'bg-purple-500 text-white hover:bg-purple-600'}`}
+                  <button
+                    type="button"
+                    className="flex-1 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium"
+                    onClick={handleSubmitExecution}
                   >
-                    {loading ? '提交中...' : '提交结果'}
+                    确认提交
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
-
-      {/* 照片上传模态框 */}
+        
+        {/* 照片上传模态框 */}
       {showPhotoUpload && selectedTask && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
