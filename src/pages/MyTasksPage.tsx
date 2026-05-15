@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Search, Filter, ChevronDown, Play, CheckCircle2, Camera, MapPin, X, Clock, AlertCircle, FileText, Users } from 'lucide-react';
+import { ArrowLeft, Search, Filter, ChevronDown, ChevronRight, Play, CheckCircle2, Camera, MapPin, X, Clock, AlertCircle, FileText, Users, UserPlus, ImagePlus, Signature } from 'lucide-react';
 import { usePeople } from '@/hooks/usePeople';
 import { Task } from './TaskListPage';
 
@@ -44,15 +44,30 @@ const getFrequencyDisplay = (type?: string, value?: number): string => {
 
 // 执行结果配置
 const EXECUTION_RESULTS = [
-  { id: 'passed', name: '合格' },
-  { id: 'failed', name: '不合格' },
+  { id: 'passed', name: '无异常' },
+  { id: 'failed', name: '存在异常' },
+  { id: 'notInvolved', name: '不涉及' },
 ];
 
 // 任务执行结果接口
 export interface TaskExecutionResult {
   taskId: string;
-  resultType: string; // passed, failed, partial
+  resultType: string; // passed, failed, notInvolved
   description: string;
+  // 隐患检查字段
+  hazardLocation?: string;
+  hazardDescription?: string;
+  hazardLevel?: string; // general, major
+  hazardType?: string;
+  rectificationType?: string; // delayed, immediate
+  rectificationDays?: number;
+  assignee?: string;
+  rectificationPhotos?: string[];
+  rectificationDescription?: string;
+  rectifier?: string;
+  signature?: string;
+  reviewer?: string;
+  // 原有字段（保留兼容）
   issueDetails?: string;
   resolved?: boolean;
   resolvedNote?: string;
@@ -126,6 +141,20 @@ const MyTasksPage: React.FC = () => {
     taskId: '',
     resultType: 'passed',
     description: '',
+    // 隐患检查字段
+    hazardLocation: '',
+    hazardDescription: '',
+    hazardLevel: 'general',
+    hazardType: '',
+    rectificationType: 'delayed',
+    rectificationDays: 3,
+    assignee: '',
+    rectificationPhotos: [],
+    rectificationDescription: '',
+    rectifier: '',
+    signature: '',
+    reviewer: '',
+    // 原有字段（保留兼容）
     issueDetails: '',
     resolved: false,
     resolvedNote: '',
@@ -658,50 +687,203 @@ const MyTasksPage: React.FC = () => {
                   />
                 </div>
                 
-                {/* 问题详情（仅在不合格时显示） */}
+                {/* 隐患检查表单（仅在存在异常时显示） */}
                 {currentExecutionResult.resultType === 'failed' && (
-                  <div>
-                    <label htmlFor="issueDetails" className="block text-sm font-medium text-gray-700 mb-2">问题详情</label>
-                    <textarea
-                      id="issueDetails"
-                      value={currentExecutionResult.issueDetails || ''}
-                      onChange={(e) => handleExecutionResultChange('issueDetails', e.target.value)}
-                      rows={3}
-                      placeholder="请详细描述发现的问题..."
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
-                    />
-                  </div>
-                )}
-                
-                {/* 已现场解决（仅在不合格时显示） */}
-                {currentExecutionResult.resultType === 'failed' && (
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="resolved"
-                      checked={currentExecutionResult.resolved || false}
-                      onChange={(e) => handleExecutionResultChange('resolved', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="resolved" className="ml-2 block text-sm text-gray-700">
-                      已现场解决
-                    </label>
-                  </div>
-                )}
-                
-                {/* 解决说明（仅在标记为已解决时显示） */}
-                {(currentExecutionResult.resultType === 'failed' && 
-                  currentExecutionResult.resolved) && (
-                  <div>
-                    <label htmlFor="resolvedNote" className="block text-sm font-medium text-gray-700 mb-2">解决说明</label>
-                    <textarea
-                      id="resolvedNote"
-                      value={currentExecutionResult.resolvedNote || ''}
-                      onChange={(e) => handleExecutionResultChange('resolvedNote', e.target.value)}
-                      rows={3}
-                      placeholder="请描述解决措施..."
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
-                    />
+                  <div className="space-y-4">
+                    {/* 隐患位置 */}
+                    <div>
+                      <label htmlFor="hazardLocation" className="block text-sm font-medium text-gray-700 mb-2">*隐患位置</label>
+                      <input
+                        id="hazardLocation"
+                        type="text"
+                        value={currentExecutionResult.hazardLocation || ''}
+                        onChange={(e) => handleExecutionResultChange('hazardLocation', e.target.value)}
+                        placeholder="请输入"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                      />
+                    </div>
+                    
+                    {/* 隐患描述 */}
+                    <div>
+                      <label htmlFor="hazardDescription" className="block text-sm font-medium text-gray-700 mb-2">*隐患描述</label>
+                      <textarea
+                        id="hazardDescription"
+                        value={currentExecutionResult.hazardDescription || ''}
+                        onChange={(e) => handleExecutionResultChange('hazardDescription', e.target.value)}
+                        rows={3}
+                        placeholder="请输入"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                      />
+                    </div>
+                    
+                    {/* 确定隐患等级 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">确定隐患等级</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="hazardLevel"
+                            value="general"
+                            checked={currentExecutionResult.hazardLevel === 'general'}
+                            onChange={(e) => handleExecutionResultChange('hazardLevel', e.target.value)}
+                            className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                          />
+                          <div className="ml-3">
+                            <div className="flex items-center">
+                              <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                              <span className="text-sm font-medium text-gray-700">一般隐患</span>
+                            </div>
+                            <p className="text-xs text-gray-500">可能引发轻微的事故的安全风险</p>
+                          </div>
+                        </label>
+                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="hazardLevel"
+                            value="major"
+                            checked={currentExecutionResult.hazardLevel === 'major'}
+                            onChange={(e) => handleExecutionResultChange('hazardLevel', e.target.value)}
+                            className="w-4 h-4 text-red-600 focus:ring-red-500 border-gray-300"
+                          />
+                          <div className="ml-3">
+                            <div className="flex items-center">
+                              <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                              <span className="text-sm font-medium text-gray-700">重大隐患</span>
+                            </div>
+                            <p className="text-xs text-gray-500">可能导致重大人员伤害、财产损失的安全风险</p>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    {/* 隐患类型 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">*隐患类型</label>
+                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
+                        <span className="text-gray-500">请选择</span>
+                        <ChevronRight size={20} className="text-gray-400" />
+                      </div>
+                    </div>
+                    
+                    {/* 整改类型 */}
+                    <div className="flex">
+                      <button
+                        type="button"
+                        className={`flex-1 py-2.5 rounded-l-lg text-sm font-medium transition-colors ${currentExecutionResult.rectificationType === 'delayed' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                        onClick={() => handleExecutionResultChange('rectificationType', 'delayed')}
+                      >
+                        限期整改
+                      </button>
+                      <button
+                        type="button"
+                        className={`flex-1 py-2.5 rounded-r-lg text-sm font-medium transition-colors ${currentExecutionResult.rectificationType === 'immediate' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                        onClick={() => handleExecutionResultChange('rectificationType', 'immediate')}
+                      >
+                        立即整改
+                      </button>
+                    </div>
+                    
+                    {/* 整改时限（仅在限期整改时显示） */}
+                    {currentExecutionResult.rectificationType === 'delayed' && (
+                      <div className="flex items-center justify-center space-x-4">
+                        <span className="text-sm text-gray-700">整改时限</span>
+                        <button
+                          type="button"
+                          className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100"
+                          onClick={() => {
+                            const currentDays = currentExecutionResult.rectificationDays || 3;
+                            if (currentDays > 1) {
+                              handleExecutionResultChange('rectificationDays', currentDays - 1);
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <span className="text-lg font-medium text-gray-900 min-w-[30px] text-center">
+                          {currentExecutionResult.rectificationDays || 3}
+                        </span>
+                        <button
+                          type="button"
+                          className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100"
+                          onClick={() => {
+                            const currentDays = currentExecutionResult.rectificationDays || 3;
+                            handleExecutionResultChange('rectificationDays', currentDays + 1);
+                          }}
+                        >
+                          +
+                        </button>
+                        <span className="text-sm text-gray-700">天</span>
+                      </div>
+                    )}
+                    
+                    {/* 指派处理人 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">*指派处理人</label>
+                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
+                        <span className="text-gray-500">请选择人员</span>
+                        <button type="button" className="text-blue-500 text-sm flex items-center">
+                          <UserPlus size={16} className="mr-1" />
+                          添加人员
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* 整改图片 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">*整改图片</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className="aspect-square border border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400">
+                          <ImagePlus size={24} />
+                          <span className="text-xs mt-1">添加图片</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* 整改描述 */}
+                    <div>
+                      <label htmlFor="rectificationDescription" className="block text-sm font-medium text-gray-700 mb-2">*整改描述</label>
+                      <textarea
+                        id="rectificationDescription"
+                        value={currentExecutionResult.rectificationDescription || ''}
+                        onChange={(e) => handleExecutionResultChange('rectificationDescription', e.target.value)}
+                        rows={3}
+                        placeholder="请输入整改措施和处理结果(最多200字)"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                      />
+                    </div>
+                    
+                    {/* 整改人 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">整改人</label>
+                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
+                        <span className="text-gray-500">请选择人员</span>
+                        <button type="button" className="text-blue-500 text-sm flex items-center">
+                          <UserPlus size={16} className="mr-1" />
+                          添加人员
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* 签名 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">签名</label>
+                      <div className="h-24 border border-gray-300 rounded-lg flex flex-col items-center justify-center">
+                        <Signature size={32} className="text-gray-300" />
+                        <span className="text-xs text-gray-400 mt-2">立即签字</span>
+                      </div>
+                    </div>
+                    
+                    {/* 验收人 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">验收人</label>
+                      <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
+                        <span className="text-gray-500">请选择人员</span>
+                        <button type="button" className="text-blue-500 text-sm">
+                          选择
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
                 
