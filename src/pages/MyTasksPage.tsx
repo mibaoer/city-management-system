@@ -146,9 +146,15 @@ const MyTasksPage: React.FC = () => {
   // 模态框状态
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showExecutionResult, setShowExecutionResult] = useState(false);
+  const [showPersonSelector, setShowPersonSelector] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  // 当前选择的人员字段（用于人员选择弹窗）
+  const [personField, setPersonField] = useState<string>('');
+  
+  // 获取当前用户信息
+  const currentUser = getPersonById(currentUserId);
   
   // 执行结果状态
   const [executionResults, setExecutionResults] = useState<TaskExecutionResult[]>([]);
@@ -168,7 +174,7 @@ const MyTasksPage: React.FC = () => {
     rectificationDescription: '',
     rectifier: '',
     signature: '',
-    reviewer: '',
+    reviewer: currentUser?.name || '', // 默认设置为当前检查人员
     // 原有字段（保留兼容）
     issueDetails: '',
     resolved: false,
@@ -237,6 +243,18 @@ const MyTasksPage: React.FC = () => {
   const getPersonName = (personId: string) => {
     const person = getPersonById(personId);
     return person ? `${person.name}` : '未知用户';
+  };
+  
+  // 打开人员选择弹窗
+  const openPersonSelector = (field: string) => {
+    setPersonField(field);
+    setShowPersonSelector(true);
+  };
+  
+  // 选择人员
+  const selectPerson = (personName: string) => {
+    handleExecutionResultChange(personField, personName);
+    setShowPersonSelector(false);
   };
   
   // 获取任务类型名称
@@ -830,8 +848,14 @@ const MyTasksPage: React.FC = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">*指派处理人</label>
                       <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                        <span className="text-gray-500">请选择人员</span>
-                        <button type="button" className="text-blue-500 text-sm flex items-center">
+                        <span className={currentExecutionResult.assignee ? 'text-gray-700' : 'text-gray-500'}>
+                          {currentExecutionResult.assignee || '请选择人员'}
+                        </span>
+                        <button 
+                          type="button" 
+                          className="text-blue-500 text-sm flex items-center"
+                          onClick={() => openPersonSelector('assignee')}
+                        >
                           <UserPlus size={16} className="mr-1" />
                           添加人员
                         </button>
@@ -866,8 +890,14 @@ const MyTasksPage: React.FC = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">整改人</label>
                       <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                        <span className="text-gray-500">请选择人员</span>
-                        <button type="button" className="text-blue-500 text-sm flex items-center">
+                        <span className={currentExecutionResult.rectifier ? 'text-gray-700' : 'text-gray-500'}>
+                          {currentExecutionResult.rectifier || '请选择人员'}
+                        </span>
+                        <button 
+                          type="button" 
+                          className="text-blue-500 text-sm flex items-center"
+                          onClick={() => openPersonSelector('rectifier')}
+                        >
                           <UserPlus size={16} className="mr-1" />
                           添加人员
                         </button>
@@ -887,8 +917,14 @@ const MyTasksPage: React.FC = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">验收人</label>
                       <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg">
-                        <span className="text-gray-500">请选择人员</span>
-                        <button type="button" className="text-blue-500 text-sm">
+                        <span className={currentExecutionResult.reviewer ? 'text-gray-700' : 'text-gray-500'}>
+                          {currentExecutionResult.reviewer || '请选择人员'}
+                        </span>
+                        <button 
+                          type="button" 
+                          className="text-blue-500 text-sm"
+                          onClick={() => openPersonSelector('reviewer')}
+                        >
                           选择
                         </button>
                       </div>
@@ -1012,6 +1048,51 @@ const MyTasksPage: React.FC = () => {
                 >
                   {loading ? '上传中...' : '确认上传'}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {/* 人员选择弹窗 */}
+      {showPersonSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 max-h-[70vh] overflow-y-auto">
+            <div className="p-4 bg-gray-100 border-b border-gray-200 flex justify-center items-center relative">
+              <h2 className="text-lg font-medium text-gray-900">选择人员</h2>
+              <button 
+                onClick={() => setShowPersonSelector(false)}
+                className="absolute right-4 p-1 rounded-full hover:bg-gray-200 text-gray-500"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="p-4">
+              {/* 搜索框 */}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="搜索人员..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                />
+              </div>
+              
+              {/* 人员列表 */}
+              <div className="space-y-2">
+                {getAllPeople().map(person => (
+                  <div
+                    key={person.id}
+                    onClick={() => selectPerson(person.name)}
+                    className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                      <Users size={18} className="text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{person.name}</p>
+                      <p className="text-xs text-gray-500">{person.department}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
