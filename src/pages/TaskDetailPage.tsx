@@ -49,16 +49,32 @@ const EXECUTION_RESULTS = [
   { id: 'notInvolved', name: '不涉及' },
 ];
 
+// 事件类型配置
+const EVENT_TYPES = [
+  { id: 'billboard', name: '广告牌' },
+  { id: 'obstruction', name: '违挡' },
+  { id: 'streetShop', name: '沿街店铺' },
+  { id: 'urbanGreening', name: '城市绿化' },
+  { id: 'wallCollapse', name: '墙体倒塌' },
+  { id: 'roadExcavation', name: '修路开挖' },
+  { id: 'mobileVendor', name: '流动摊贩' },
+  { id: 'subwayEntrance', name: '地铁口管理' },
+  { id: 'sidewalkParking', name: '人行道违停' },
+  { id: 'storeOperation', name: '出店经营' },
+  { id: 'constructionSite', name: '工地' },
+  { id: 'municipalFacility', name: '市政设施安全巡查' },
+];
+
 // 任务执行结果接口
 export interface TaskExecutionResult {
   taskId: string;
   resultType: string; // passed, failed, notInvolved
   description: string;
-  // 隐患检查字段
-  hazardLocation?: string;
-  hazardDescription?: string;
-  hazardLevel?: string; // general, major
-  hazardType?: string;
+  // 事件检查字段
+  eventLocation?: string;
+  eventDescription?: string;
+  eventLevel?: string; // urgent, normal, general
+  eventType?: string;
   rectificationType?: string; // delayed, immediate
   rectificationDays?: number;
   assignee?: string;
@@ -127,11 +143,11 @@ const TaskDetailPage: React.FC = () => {
     taskId: taskId || '',
     resultType: 'passed',
     description: '',
-    // 隐患检查字段
-    hazardLocation: '',
-    hazardDescription: '',
-    hazardLevel: 'general',
-    hazardType: '',
+    // 事件检查字段
+    eventLocation: '',
+    eventDescription: '',
+    eventLevel: 'general',
+    eventType: '',
     rectificationType: 'delayed',
     rectificationDays: 3,
     assignee: '',
@@ -554,95 +570,107 @@ const TaskDetailPage: React.FC = () => {
                 </div>
               </div>
               
-              {/* 执行描述 */}
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">执行描述 *</label>
-                <textarea
-                  id="description"
-                  value={currentExecutionResult.description}
-                  onChange={(e) => handleExecutionResultChange('description', e.target.value)}
-                  rows={4}
-                  placeholder="请描述任务执行的具体情况..."
-                  className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
-                />
-              </div>
-              
-              {/* 隐患检查表单（仅在存在异常时显示） */}
+              {/* 事件检查表单（仅在存在异常时显示） */}
               {currentExecutionResult.resultType === 'failed' && (
                 <div className="space-y-4">
-                  {/* 隐患位置 */}
+                  {/* 事件位置 */}
                   <div>
-                    <label htmlFor="hazardLocation" className="block text-sm font-medium text-gray-700 mb-2">*隐患位置</label>
+                    <label htmlFor="eventLocation" className="block text-sm font-medium text-gray-700 mb-2">*事件位置</label>
                     <input
-                      id="hazardLocation"
+                      id="eventLocation"
                       type="text"
-                      value={currentExecutionResult.hazardLocation || ''}
-                      onChange={(e) => handleExecutionResultChange('hazardLocation', e.target.value)}
+                      value={currentExecutionResult.eventLocation || ''}
+                      onChange={(e) => handleExecutionResultChange('eventLocation', e.target.value)}
                       placeholder="请输入"
                       className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
                     />
                   </div>
                   
-                  {/* 隐患描述 */}
+                  {/* 事件描述 */}
                   <div>
-                    <label htmlFor="hazardDescription" className="block text-sm font-medium text-gray-700 mb-2">*隐患描述</label>
+                    <label htmlFor="eventDescription" className="block text-sm font-medium text-gray-700 mb-2">*事件描述</label>
                     <textarea
-                      id="hazardDescription"
-                      value={currentExecutionResult.hazardDescription || ''}
-                      onChange={(e) => handleExecutionResultChange('hazardDescription', e.target.value)}
+                      id="eventDescription"
+                      value={currentExecutionResult.eventDescription || ''}
+                      onChange={(e) => handleExecutionResultChange('eventDescription', e.target.value)}
                       rows={3}
                       placeholder="请输入"
                       className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
                     />
                   </div>
                   
-                  {/* 确定隐患等级 */}
+                  {/* 确定事件等级 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">确定隐患等级</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">确定事件等级</label>
                     <div className="space-y-2">
                       <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
                         <input
                           type="radio"
-                          name="hazardLevel"
-                          value="general"
-                          checked={currentExecutionResult.hazardLevel === 'general'}
-                          onChange={(e) => handleExecutionResultChange('hazardLevel', e.target.value)}
-                          className="w-4 h-4 text-blue-500 focus:ring-blue-500 border-gray-300 bg-white"
-                        />
-                        <div className="ml-3">
-                          <div className="flex items-center">
-                            <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-                            <span className="text-sm font-medium text-gray-700">一般隐患</span>
-                          </div>
-                          <p className="text-xs text-gray-500">可能引发轻微的事故的安全风险</p>
-                        </div>
-                      </label>
-                      <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                        <input
-                          type="radio"
-                          name="hazardLevel"
-                          value="major"
-                          checked={currentExecutionResult.hazardLevel === 'major'}
-                          onChange={(e) => handleExecutionResultChange('hazardLevel', e.target.value)}
+                          name="eventLevel"
+                          value="urgent"
+                          checked={currentExecutionResult.eventLevel === 'urgent'}
+                          onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                           className="w-4 h-4 text-red-500 focus:ring-red-500 border-gray-300 bg-white"
                         />
                         <div className="ml-3">
                           <div className="flex items-center">
                             <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-                            <span className="text-sm font-medium text-gray-700">重大隐患</span>
+                            <span className="text-sm font-medium text-gray-700">特急</span>
                           </div>
-                          <p className="text-xs text-gray-500">可能导致重大人员伤害、财产损失的安全风险</p>
+                          <p className="text-xs text-gray-500">需要立即处理的紧急事件</p>
+                        </div>
+                      </label>
+                      <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input
+                          type="radio"
+                          name="eventLevel"
+                          value="normal"
+                          checked={currentExecutionResult.eventLevel === 'normal'}
+                          onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
+                          className="w-4 h-4 text-orange-500 focus:ring-orange-500 border-gray-300 bg-white"
+                        />
+                        <div className="ml-3">
+                          <div className="flex items-center">
+                            <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+                            <span className="text-sm font-medium text-gray-700">急</span>
+                          </div>
+                          <p className="text-xs text-gray-500">需要尽快处理的事件</p>
+                        </div>
+                      </label>
+                      <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input
+                          type="radio"
+                          name="eventLevel"
+                          value="general"
+                          checked={currentExecutionResult.eventLevel === 'general'}
+                          onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
+                          className="w-4 h-4 text-blue-500 focus:ring-blue-500 border-gray-300 bg-white"
+                        />
+                        <div className="ml-3">
+                          <div className="flex items-center">
+                            <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                            <span className="text-sm font-medium text-gray-700">一般</span>
+                          </div>
+                          <p className="text-xs text-gray-500">常规事件，按计划处理</p>
                         </div>
                       </label>
                     </div>
                   </div>
                   
-                  {/* 隐患类型 */}
+                  {/* 事件类型 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">*隐患类型</label>
-                    <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
-                      <span className="text-gray-500">请选择</span>
-                      <ChevronRight size={20} className="text-gray-400" />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">*事件类型</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {EVENT_TYPES.map(type => (
+                        <button
+                          key={type.id}
+                          type="button"
+                          className={`py-2 px-3 text-xs rounded-lg border transition-colors ${currentExecutionResult.eventType === type.id ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 hover:border-gray-400'}`}
+                          onClick={() => handleExecutionResultChange('eventType', type.id)}
+                        >
+                          {type.name}
+                        </button>
+                      ))}
                     </div>
                   </div>
                   
