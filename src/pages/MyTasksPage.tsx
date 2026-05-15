@@ -44,8 +44,8 @@ const getFrequencyDisplay = (type?: string, value?: number): string => {
 
 // 执行结果配置
 const EXECUTION_RESULTS = [
-  { id: 'passed', name: '无异常' },
-  { id: 'failed', name: '存在异常' },
+  { id: 'passed', name: '合格' },
+  { id: 'failed', name: '不合格' },
 ];
 
 // 事件类型配置
@@ -707,7 +707,51 @@ const MyTasksPage: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* 事件检查表单（仅在存在异常时显示） */}
+                {/* 合格状态下的字段 */}
+                {currentExecutionResult.resultType === 'passed' && (
+                  <div className="space-y-4">
+                    {/* 执行描述 */}
+                    <div>
+                      <label htmlFor="executionDesc" className="block text-sm font-medium text-gray-700 mb-2">*执行描述</label>
+                      <textarea
+                        id="executionDesc"
+                        value={currentExecutionResult.description || ''}
+                        onChange={(e) => handleExecutionResultChange('description', e.target.value)}
+                        rows={3}
+                        placeholder="请输入任务执行的具体情况"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                      />
+                    </div>
+                    
+                    {/* 上传检查照片 */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">上传检查照片</label>
+                      <div className="flex flex-wrap gap-2">
+                        {uploadedPhotos.map((photo, index) => (
+                          <div key={index} className="relative w-24 h-24">
+                            <img src={photo} alt={`照片${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                            <button 
+                              onClick={() => setUploadedPhotos(prev => prev.filter((_, i) => i !== index))}
+                              className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                        <button 
+                          type="button"
+                          onClick={() => setShowPhotoUpload(true)}
+                          className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-400 transition-colors"
+                        >
+                          <Camera size={24} className="text-gray-400 mb-1" />
+                          <span className="text-xs text-gray-500">添加图片</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* 事件检查表单（仅在不合格时显示） */}
                 {currentExecutionResult.resultType === 'failed' && (
                   <div className="space-y-4">
                     {/* 事件位置 */}
