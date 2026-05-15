@@ -46,7 +46,6 @@ const getFrequencyDisplay = (type?: string, value?: number): string => {
 const EXECUTION_RESULTS = [
   { id: 'passed', name: '无异常' },
   { id: 'failed', name: '存在异常' },
-  { id: 'notInvolved', name: '不涉及' },
 ];
 
 // 事件类型配置
@@ -68,7 +67,7 @@ const EVENT_TYPES = [
 // 任务执行结果接口
 export interface TaskExecutionResult {
   taskId: string;
-  resultType: string; // passed, failed, notInvolved
+  resultType: string; // passed, failed
   description: string;
   // 事件检查字段
   eventLocation?: string;
