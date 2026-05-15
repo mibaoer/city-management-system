@@ -72,7 +72,7 @@ export interface TaskExecutionResult {
   // 事件检查字段
   eventLocation?: string;
   eventDescription?: string;
-  eventLevel?: string; // urgent, normal, general
+  eventLevel?: string; // 特急, 急, 一般
   eventType?: string;
   rectificationType?: string; // delayed, immediate
   rectificationDays?: number;
@@ -145,7 +145,7 @@ const TaskDetailPage: React.FC = () => {
     // 事件检查字段
     eventLocation: '',
     eventDescription: '',
-    eventLevel: 'general',
+    eventLevel: '一般',
     eventType: '',
     rectificationType: 'delayed',
     rectificationDays: 3,
@@ -622,8 +622,8 @@ const TaskDetailPage: React.FC = () => {
                         <input
                           type="radio"
                           name="eventLevel"
-                          value="urgent"
-                          checked={currentExecutionResult.eventLevel === 'urgent'}
+                          value="特急"
+                          checked={currentExecutionResult.eventLevel === '特急'}
                           onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                           className="w-4 h-4 text-red-500 focus:ring-red-500 border-gray-300 bg-white"
                         />
@@ -639,8 +639,8 @@ const TaskDetailPage: React.FC = () => {
                         <input
                           type="radio"
                           name="eventLevel"
-                          value="normal"
-                          checked={currentExecutionResult.eventLevel === 'normal'}
+                          value="急"
+                          checked={currentExecutionResult.eventLevel === '急'}
                           onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                           className="w-4 h-4 text-orange-500 focus:ring-orange-500 border-gray-300 bg-white"
                         />
@@ -656,8 +656,8 @@ const TaskDetailPage: React.FC = () => {
                         <input
                           type="radio"
                           name="eventLevel"
-                          value="general"
-                          checked={currentExecutionResult.eventLevel === 'general'}
+                          value="一般"
+                          checked={currentExecutionResult.eventLevel === '一般'}
                           onChange={(e) => handleExecutionResultChange('eventLevel', e.target.value)}
                           className="w-4 h-4 text-blue-500 focus:ring-blue-500 border-gray-300 bg-white"
                         />
